@@ -5,11 +5,11 @@ import { FiHeart, FiMenu, FiSearch, FiShoppingBag, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
-  { label: 'Shop', href: '#shop' },
-  { label: 'Custom Print', href: '#custom-print' },
-  { label: 'Drops', href: '#drops' },
-  { label: 'Reviews', href: '#reviews' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Shop', to: '/shop' },
+  { label: 'Custom Print', to: '/custom-print' },
+  { label: 'Drops', to: '/drops' },
+  { label: 'Reviews', to: '/reviews' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 function Navbar() {
@@ -40,13 +40,13 @@ function Navbar() {
 
         <nav className="hidden items-center gap-8 lg:flex">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.label}
-              href={item.href}
+              to={item.to}
               className="text-sm font-medium text-slate-700 transition-colors duration-200 hover:text-brand-pink"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -95,14 +95,14 @@ function Navbar() {
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:px-2">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.to}
                   className="rounded-2xl bg-brand-mist px-4 py-3 text-sm font-semibold text-brand-ink"
                   onClick={() => setOpen(false)}
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
               <div className="flex gap-3 pt-2">
                 <button type="button" className="flex-1 rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700">

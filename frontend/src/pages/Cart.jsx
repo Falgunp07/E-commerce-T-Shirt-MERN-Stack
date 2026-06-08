@@ -42,7 +42,7 @@ export default function Cart() {
                   <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-start gap-4">
                       <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
-                        <img src={p.img || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80'} alt={p.title} className="h-full w-full object-cover" />
+                        <img src={p.img || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80'} alt={p.title} className="h-full w-full object-contain bg-white p-2" />
                       </div>
                       <div>
                         <div className="text-lg font-bold text-brand-ink">{p.title}</div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiStar } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Featured will be loaded from backend (top 3 products)
 
@@ -37,6 +37,15 @@ export default function HomePage() {
 
 	return (
 		<main className="w-full">
+			<section className="w-full bg-black py-3 text-white">
+				<div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-2 px-4 text-center sm:flex-row sm:gap-4 sm:px-6 lg:px-8">
+					<span className="text-sm font-semibold uppercase tracking-[0.28em] text-green-400">Coupon Code</span>
+					<p className="text-sm font-medium text-white/90">
+						Use <span className="font-bold text-green-400">THREAD50</span> and get <span className="font-extrabold text-red-500">50% OFF</span> on your first custom order.
+					</p>
+				</div>
+			</section>
+
 			{/* Hero — full-bleed background, centered content */}
 			<section className="w-full bg-linear-to-br from-white via-[#fff7f8] to-[#f4f5ff] py-12">
 				<div className="mx-auto max-w-7xl p-8 lg:grid lg:grid-cols-2 lg:gap-8">
@@ -45,8 +54,8 @@ export default function HomePage() {
 						<h1 className="mt-4 text-4xl font-extrabold text-brand-ink sm:text-5xl">Premium Custom Tees — Print with precision</h1>
 						<p className="mt-4 max-w-xl text-base text-slate-700">High-quality materials, vibrant prints, and limited drops — built for collectors and creators. Design your own or shop our curated collections.</p>
 						<div className="mt-6 flex gap-3">
-							  <a href="#shop" style={{ backgroundColor: '#1F2937' }} className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-xl hover:brightness-90 transform transition">Shop Collection <FiArrowRight /></a>
-							<a href="#custom-print" className="inline-flex items-center gap-2 rounded-full border border-brand-purple/30 bg-white/80 px-5 py-3 text-sm font-semibold text-brand-purple">Design Yours</a>
+							<Link to="/shop" style={{ backgroundColor: '#1F2937' }} className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-xl hover:brightness-90 transform transition">Shop Collection <FiArrowRight /></Link>
+							<Link to="/custom-print" className="inline-flex items-center gap-2 rounded-full border border-brand-purple/30 bg-white/80 px-5 py-3 text-sm font-semibold text-brand-purple">Design Yours</Link>
 						</div>
 					</motion.div>
 
@@ -54,7 +63,7 @@ export default function HomePage() {
 						<div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-brand-pink/20 blur-3xl" />
 						<div className="absolute -right-8 -bottom-8 h-48 w-48 rounded-full bg-brand-purple/20 blur-3xl" />
 						<div className="w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-2 shadow-2xl">
-							<img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="hero" className="h-80 w-full object-cover rounded-xl" />
+							<img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="hero" className="h-80 w-full rounded-xl object-contain bg-white p-3" />
 						</div>
 					</motion.div>
 				</div>
@@ -65,7 +74,7 @@ export default function HomePage() {
 				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 					<div className="flex items-baseline justify-between">
 					<h2 className="text-2xl font-extrabold text-brand-ink">Trending Drops</h2>
-						<a href="#shop" className="text-sm font-medium text-brand-purple">View all</a>
+						<Link to="/shop" className="text-sm font-medium text-brand-purple">View all</Link>
 					</div>
 
 					<div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -74,7 +83,7 @@ export default function HomePage() {
 						) : (
 								featured.map((p) => (
 									<article key={p._id} onClick={() => navigate(`/product/${p._id}`)} className="relative overflow-hidden rounded-xl border border-slate-100 bg-white shadow cursor-pointer">
-										<img src={p.img} alt={p.title} className="h-56 w-full object-cover" />
+										<img src={p.img} alt={p.title} className="h-56 w-full rounded-t-xl object-contain bg-white p-3" />
 										<div className="p-4">
 											<h3 className="text-base font-semibold text-brand-ink">{p.title}</h3>
 											<div className="mt-2 flex items-center justify-between">
