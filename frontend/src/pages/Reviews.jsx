@@ -37,6 +37,19 @@ export default function Reviews() {
             ))}
           </div>
 
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {[
+              ['4.9/5', 'Average product satisfaction'],
+              ['2–4 days', 'Typical COD delivery window'],
+              ['100%', 'Cotton-first comfort focus'],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm text-center">
+                <div className="text-2xl font-black text-brand-ink">{value}</div>
+                <div className="mt-1 text-sm text-slate-600">{label}</div>
+              </div>
+            ))}
+          </div>
+
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/shop" className="rounded-full bg-black px-5 py-3 text-sm font-semibold text-white">
               Shop products
