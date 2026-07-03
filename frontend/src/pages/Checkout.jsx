@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ export default function Checkout() {
   const { cart, total, clear, addItem, updateItemQty, removeItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [coupons, setCoupons] = useState([]);
   const [customer, setCustomer] = useState({ name: '', phone: '', address: '', postcode: '' });
   const [fieldErrors, setFieldErrors] = useState({});
   const [coupon, setCoupon] = useState('');
@@ -26,7 +27,35 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [editingAddressId, setEditingAddressId] = useState('');
 
-  const discount = appliedCoupon === 'OFFER50' ? Math.round(total * 0.5) : 0;
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/coupons');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.coupons)) {
+          setCoupons(data.coupons);
+        }
+      } catch (err) {
+        console.error('Failed to fetch coupons');
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  let discount = 0;
+  if (appliedCoupon) {
+    const foundCoupon = coupons?.find(c => c.code === appliedCoupon && c.isActive);
+    if (foundCoupon) {
+      if (foundCoupon.discountType === 'percentage') {
+        discount = Math.round((total * foundCoupon.discountValue) / 100);
+        if (foundCoupon.maxDiscountLimit) {
+          discount = Math.min(discount, foundCoupon.maxDiscountLimit);
+        }
+      } else if (foundCoupon.discountType === 'flat') {
+        discount = foundCoupon.discountValue;
+      }
+    }
+  }
   const finalTotal = Math.max(total - discount, 0);
 
   function normalizeText(value) {
@@ -114,14 +143,29 @@ export default function Checkout() {
 
   function applyCoupon() {
     const normalized = coupon.trim().toUpperCase();
-    if (normalized === 'OFFER50') {
-      setAppliedCoupon('OFFER50');
-      setCouponMessage({ text: 'Coupon code successfully applied', type: 'success' });
+    const foundCoupon = coupons?.find(c => c.code === normalized && c.isActive);
+    
+    if (!foundCoupon) {
+      setAppliedCoupon('');
+      setCouponMessage({ text: 'Invalid or expired coupon code', type: 'error' });
       return;
     }
 
-    setAppliedCoupon('');
-    setCouponMessage({ text: 'Invalid or expired coupon code', type: 'error' });
+    const now = new Date();
+    if (foundCoupon.activeTo && new Date(foundCoupon.activeTo) < now) {
+      setAppliedCoupon('');
+      setCouponMessage({ text: 'Coupon has expired', type: 'error' });
+      return;
+    }
+
+    if (foundCoupon.minimumCartValue && total < foundCoupon.minimumCartValue) {
+      setAppliedCoupon('');
+      setCouponMessage({ text: `Minimum cart value must be ₹${foundCoupon.minimumCartValue}`, type: 'error' });
+      return;
+    }
+
+    setAppliedCoupon(normalized);
+    setCouponMessage({ text: 'Coupon code successfully applied', type: 'success' });
   }
 
   async function placeOrder() {
