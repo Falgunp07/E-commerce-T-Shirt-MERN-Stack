@@ -135,17 +135,21 @@ function Navbar() {
                   {user ? (
                     isAdminRole ? (
                       <div className="mt-2 space-y-1">
-                        <Link to={profileTo} onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                        <Link to="/admin/dashboard" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
                           <FiSettings />
-                          Admin dashboard
+                          Dashboard
                         </Link>
                         <Link to="/admin/catalog" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
                           <FiPackage />
-                          Catalog manager
+                          Catalog
                         </Link>
                         <Link to="/admin/orders" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
                           <FiPackage />
                           Orders
+                        </Link>
+                        <Link to="/admin/customers" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                          <FiUser />
+                          Customers
                         </Link>
                         <button type="button" onClick={handleProfileLogout} className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50">
                           <FiLogOut />
@@ -153,28 +157,28 @@ function Navbar() {
                         </button>
                       </div>
                     ) : (
-                    <div className="mt-2 space-y-1">
-                      <Link to="/profile?tab=overview" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
-                        <FiUser />
-                        Profile
-                      </Link>
-                      <Link to="/profile?tab=orders" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
-                        <FiPackage />
-                        Orders
-                      </Link>
-                      <Link to="/profile?tab=addresses" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
-                        <FiSettings />
-                        Addresses
-                      </Link>
-                      <Link to="/wishlist" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
-                        <FiHeart />
-                        Wishlist
-                      </Link>
-                      <button type="button" onClick={handleProfileLogout} className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50">
-                        <FiLogOut />
-                        Log out
-                      </button>
-                    </div>
+                      <div className="mt-2 space-y-1">
+                        <Link to="/profile?tab=overview" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                          <FiUser />
+                          Profile
+                        </Link>
+                        <Link to="/profile?tab=orders" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                          <FiPackage />
+                          Orders
+                        </Link>
+                        <Link to="/profile?tab=addresses" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                          <FiSettings />
+                          Addresses
+                        </Link>
+                        <Link to="/wishlist" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-brand-mist">
+                          <FiHeart />
+                          Wishlist
+                        </Link>
+                        <button type="button" onClick={handleProfileLogout} className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50">
+                          <FiLogOut />
+                          Log out
+                        </button>
+                      </div>
                     )
                   ) : (
                     <div className="mt-2 space-y-1">
