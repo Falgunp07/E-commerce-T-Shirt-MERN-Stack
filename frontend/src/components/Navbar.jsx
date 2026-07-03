@@ -125,9 +125,9 @@ function Navbar() {
                     <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Account</div>
                     <div className="mt-1 text-sm font-bold text-brand-ink">{user ? user.name : 'Guest user'}</div>
                     <div className="mt-1 text-xs text-slate-500">{user ? user.email : 'Sign in to view your profile and orders'}</div>
-                    {user && (
+                    {user && !isAdminRole && (
                       <div className="mt-2 inline-flex rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white">
-                        {isAdminRole ? `${user.role.replace('_', ' ')} access` : 'Customer account'}
+                        Customer account
                       </div>
                     )}
                   </div>
