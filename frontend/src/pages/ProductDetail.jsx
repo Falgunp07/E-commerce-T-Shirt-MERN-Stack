@@ -1,7 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiHeart } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 function formatPrice(v) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -10,6 +11,7 @@ function formatPrice(v) {
 export default function ProductDetail() {
   const { id } = useParams();
   const { cart, addItem, updateItemQty, removeItem } = useCart();
+  const { wishlist, toggleItem } = useWishlist();
   const [size, setSize] = useState('M');
   const [imgIndex, setImgIndex] = useState(0);
   const [product, setProduct] = useState(null);
@@ -42,6 +44,7 @@ export default function ProductDetail() {
   }, [cart, product, size]);
 
   const qty = existing?.qty || 0;
+  const wishlisted = wishlist.some((item) => item.id === product?._id);
 
   if (loading) {
     return (
@@ -178,6 +181,14 @@ export default function ProductDetail() {
                   <button onClick={handleAdd} className="w-full rounded-full bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm">Add to cart</button>
                 )}
               </div>
+
+              <button
+                onClick={() => toggleItem({ id: product._id, title: product.title, price: product.price, img: product.img })}
+                className={`inline-flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition ${wishlisted ? 'border-red-500 bg-red-500 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
+              >
+                <FiHeart className="mr-2" />
+                {wishlisted ? 'Wishlisted' : 'Wishlist this product'}
+              </button>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">

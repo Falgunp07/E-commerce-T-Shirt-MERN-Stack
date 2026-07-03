@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import { FiHeart } from 'react-icons/fi';
 
 // Fetch products from backend API instead of using local mock data
 // Backend endpoint: GET /api/products
@@ -27,7 +29,8 @@ const COLOR_OPTIONS = [
 
 export default function Products() {
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { cart, addItem, updateItemQty, removeItem } = useCart();
+  const { wishlist, toggleItem } = useWishlist();
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState('');
   const [color, setColor] = useState('All');
@@ -67,6 +70,31 @@ export default function Products() {
       if (sortBy === 'name') return a.title.localeCompare(b.title);
       return 0;
     });
+
+  function isWishlisted(productId) {
+    return wishlist.some((item) => item.id === productId);
+  }
+
+  function getCartItem(productId) {
+    return cart.find((item) => item.id === productId && (item.size ?? null) === null);
+  }
+
+  function openProduct(productId) {
+    navigate(`/product/${productId}`);
+  }
+
+  function handleCardClick(e, productId) {
+    if (e.target.closest('button, a, input, select, textarea')) return;
+    openProduct(productId);
+  }
+
+  function handleCardKeyDown(e, productId) {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openProduct(productId);
+    }
+  }
 
   return (
     <main className="bg-brand-gradient">
@@ -169,13 +197,35 @@ export default function Products() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {filteredProducts.map((p) => (
-            <article key={p._id} className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-transform duration-300 hover:-translate-y-1">
+          {filteredProducts.map((p) => {
+            const cartItem = getCartItem(p._id);
+            const qty = cartItem?.qty || 0;
+
+            return (
+              <article
+                key={p._id}
+                onClick={(e) => handleCardClick(e, p._id)}
+                onKeyDown={(e) => handleCardKeyDown(e, p._id)}
+                role="button"
+                tabIndex={0}
+                className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand-ink/20"
+              >
               <div className="relative overflow-hidden">
                 <div className="bg-white p-3">
                   <img src={p.img} alt={p.title} className="h-80 w-full object-contain transition-transform duration-500 group-hover:scale-105" />
                 </div>
                 <div className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-xs font-semibold text-white">New Drop</div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+                  }}
+                  aria-label={isWishlisted(p._id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                  className={`absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border text-lg shadow-sm transition ${isWishlisted(p._id) ? 'border-red-500 bg-red-500 text-white' : 'border-slate-200 bg-white/95 text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
+                >
+                  <FiHeart className={isWishlisted(p._id) ? 'fill-current' : ''} />
+                </button>
                 <div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-brand-ink shadow">
                   ₹{p.price}
                 </div>
@@ -195,23 +245,51 @@ export default function Products() {
                   </div>
                 </div>
 
-                <div className="mt-5 flex items-center gap-3 flex-nowrap">
-                  <button
-                    onClick={() => addItem({ id: p._id, title: p.title, price: p.price })}
-                    className="flex-none inline-flex items-center justify-center h-10 rounded-full bg-black px-4 text-sm font-semibold text-white shadow transition hover:opacity-90 whitespace-nowrap"
-                  >
-                    Add to cart
-                  </button>
-                  <button
-                    onClick={() => navigate(`/product/${p._id}`)}
-                    className="flex-none inline-flex items-center justify-center h-10 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-brand-ink hover:text-brand-ink whitespace-nowrap"
-                  >
-                    View details
-                  </button>
+                <div className="mt-5 flex items-center justify-center">
+                  {qty > 0 ? (
+                    <div className="inline-flex h-10 items-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (qty <= 1) removeItem(p._id, null);
+                          else updateItemQty(p._id, null, qty - 1);
+                        }}
+                        className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
+                        aria-label={`Remove one ${p.title} from cart`}
+                      >
+                        -
+                      </button>
+                      <span className="flex h-10 min-w-12 items-center justify-center bg-black px-3 text-sm font-bold text-white">{qty}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+                        }}
+                        className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
+                        aria-label={`Add one more ${p.title} to cart`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+                      }}
+                      className="flex-none inline-flex h-10 items-center justify-center rounded-full bg-black px-4 text-sm font-semibold text-white shadow transition hover:opacity-90 whitespace-nowrap"
+                    >
+                      Add to cart
+                    </button>
+                  )}
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
     </main>

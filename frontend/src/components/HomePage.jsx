@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiArrowRight, FiStar } from 'react-icons/fi';
+import { FiArrowRight } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import { FiHeart } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Featured will be loaded from backend (top 3 products)
@@ -14,6 +16,7 @@ export default function HomePage() {
 	const [loading, setLoading] = useState(true);
 	const [featured, setFeatured] = useState([]);
 	const { cart, addItem, updateItemQty, removeItem } = useCart();
+	const { wishlist, toggleItem } = useWishlist();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -34,6 +37,31 @@ export default function HomePage() {
 			mounted = false;
 		};
 	}, []);
+
+	function isWishlisted(productId) {
+		return wishlist.some((item) => item.id === productId);
+	}
+
+	function getCartItem(productId) {
+		return cart.find((item) => item.id === productId && (item.size ?? null) === null);
+	}
+
+	function openProduct(productId) {
+		navigate(`/product/${productId}`);
+	}
+
+	function handleProductCardClick(e, productId) {
+		if (e.target.closest('button, a, input, select, textarea')) return;
+		openProduct(productId);
+	}
+
+	function handleProductCardKeyDown(e, productId) {
+		if (e.target !== e.currentTarget) return;
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			openProduct(productId);
+		}
+	}
 
 	return (
 		<main className="w-full">
@@ -81,66 +109,100 @@ export default function HomePage() {
 						{loading ? (
 							[1, 2, 3].map((i) => <div key={i} className="h-64 animate-pulse rounded-xl bg-slate-100" />)
 						) : (
-								featured.map((p) => (
-									<article key={p._id} onClick={() => navigate(`/product/${p._id}`)} className="relative overflow-hidden rounded-xl border border-slate-100 bg-white shadow cursor-pointer">
-										<img src={p.img} alt={p.title} className="h-56 w-full rounded-t-xl object-contain bg-white p-3" />
-										<div className="p-4">
-											<h3 className="text-base font-semibold text-brand-ink">{p.title}</h3>
-											<div className="mt-2 flex items-center justify-between">
-												<div className="flex items-center gap-2 text-sm text-slate-600"><FiStar className="text-amber-400" /> 4.8</div>
-												<div className="text-lg font-extrabold">{formatPrice(p.price)}</div>
-											</div>
-											<div className="mt-3">
-												{/* determine qty from cart (no size variant) */}
-												{(() => {
-													const item = cart.find((c) => c.id === p._id && !c.size);
-													const qty = item?.qty || 0;
-													if (qty === 0) {
-														return (
-															<div className="flex justify-center">
-																<button
-																	onClick={(e) => {
-																		e.stopPropagation();
-																		addItem({ id: p._id, title: p.title, price: p.price });
-																	}}
-																	className="w-full inline-flex items-center justify-center h-10 rounded-full bg-black px-4 text-sm font-semibold text-white shadow-sm whitespace-nowrap"
-																>
-																	Add to cart
-																</button>
-															</div>
-														);
-													}
+								featured.map((p) => {
+									const cartItem = getCartItem(p._id);
+									const qty = cartItem?.qty || 0;
 
-													return (
-														<div className="flex items-center justify-center gap-3">
+									return (
+										<article
+											key={p._id}
+											onClick={(e) => handleProductCardClick(e, p._id)}
+											onKeyDown={(e) => handleProductCardKeyDown(e, p._id)}
+											role="button"
+											tabIndex={0}
+											className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand-ink/20"
+										>
+											<div className="relative overflow-hidden">
+												<div className="bg-white p-3">
+													<img src={p.img} alt={p.title} className="h-80 w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+												</div>
+												<div className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-xs font-semibold text-white">New Drop</div>
+												<button
+													type="button"
+													onClick={(e) => {
+														e.stopPropagation();
+														toggleItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+													}}
+													aria-label={isWishlisted(p._id) ? 'Remove from wishlist' : 'Add to wishlist'}
+													className={`absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border text-lg shadow-sm transition ${isWishlisted(p._id) ? 'border-red-500 bg-red-500 text-white' : 'border-slate-200 bg-white/95 text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
+												>
+													<FiHeart className={isWishlisted(p._id) ? 'fill-current' : ''} />
+												</button>
+												<div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-brand-ink shadow">
+													{formatPrice(p.price)}
+												</div>
+											</div>
+
+											<div className="p-5">
+												<div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Streetwear / Custom</div>
+												<h3 className="mt-2 text-xl font-extrabold text-brand-ink">{p.title}</h3>
+												<p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600">{p.description}</p>
+
+												<div className="mt-5 flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+													<div>
+														<div className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">Price</div>
+														<div className="text-lg font-black text-brand-ink">{formatPrice(p.price)}</div>
+													</div>
+													<div className="text-right text-xs font-medium text-slate-500">
+														Size <span className="font-semibold text-brand-ink">S M L</span>
+													</div>
+												</div>
+
+												<div className="mt-5 flex items-center justify-center">
+													{qty > 0 ? (
+														<div className="inline-flex h-10 items-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm">
 															<button
+																type="button"
 																onClick={(e) => {
 																	e.stopPropagation();
-																	const newQty = qty - 1;
-																	if (newQty <= 0) removeItem(p._id);
-																	else updateItemQty(p._id, undefined, newQty);
+																	if (qty <= 1) removeItem(p._id, null);
+																	else updateItemQty(p._id, null, qty - 1);
 																}}
-																className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg font-bold text-brand-ink"
+																className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
+																aria-label={`Remove one ${p.title} from cart`}
 															>
 																-
 															</button>
-															<div className="text-sm font-semibold">{qty}</div>
+															<span className="flex h-10 min-w-12 items-center justify-center bg-black px-3 text-sm font-bold text-white">{qty}</span>
 															<button
+																type="button"
 																onClick={(e) => {
 																	e.stopPropagation();
-																	addItem({ id: p._id, title: p.title, price: p.price });
+																	addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
 																}}
-																className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-lg font-bold text-white"
+																className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
+																aria-label={`Add one more ${p.title} to cart`}
 															>
 																+
 															</button>
 														</div>
-													);
-												})()}
+													) : (
+														<button
+															type="button"
+															onClick={(e) => {
+																e.stopPropagation();
+																addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+															}}
+															className="inline-flex h-10 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow transition hover:opacity-90 whitespace-nowrap"
+														>
+															Add to cart
+														</button>
+													)}
+												</div>
 											</div>
-										</div>
-									</article>
-							))
+										</article>
+									);
+								})
 						)}
 					</div>
 				</div>

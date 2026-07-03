@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 function formatPrice(v) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -7,6 +8,7 @@ function formatPrice(v) {
 
 export default function Cart() {
   const { cart, total, addItem, updateItemQty, removeItem, clear } = useCart();
+  const { user } = useAuth();
   const itemCount = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
 
   return (
@@ -106,8 +108,8 @@ export default function Cart() {
               </div>
 
               <div className="space-y-3">
-                <Link to="/checkout" className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10">
-                  Proceed to checkout
+                <Link to={user ? '/checkout' : '/login'} className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10">
+                  {user ? 'Proceed to checkout' : 'Sign in to checkout'}
                 </Link>
                 <button onClick={() => clear()} className="inline-flex w-full items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-700 hover:border-brand-ink hover:text-brand-ink">
                   Clear cart

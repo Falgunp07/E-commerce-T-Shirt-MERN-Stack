@@ -26,6 +26,21 @@ export default function Contact() {
             ))}
           </div>
 
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-lg font-bold text-brand-ink">Best for</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                College events, creator merch, birthdays, couple tees, and small batch custom prints with COD support.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-lg font-bold text-brand-ink">Response info</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                We usually reply within one working day with size guidance, price details, and design suggestions.
+              </p>
+            </div>
+          </div>
+
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/custom-print" className="rounded-full bg-black px-5 py-3 text-sm font-semibold text-white">
               Custom print
