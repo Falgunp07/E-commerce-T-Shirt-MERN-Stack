@@ -10,15 +10,27 @@ const OrderItemSchema = new mongoose.Schema({
 });
 
 const OrderSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   cart: [OrderItemSchema],
   amount: Number,
   customer: {
     name: String,
+    email: String,
     phone: String,
     address: String,
   },
   paymentMethod: { type: String, default: 'COD' },
   status: { type: String, default: 'pending' },
+  awbCode: String,
+  shippingLabelUrl: String,
+  trackingUrl: String,
+  rma: {
+    status: { type: String, default: 'none' },
+    reason: String,
+    qcStatus: String,
+    refundTxnId: String,
+    updatedAt: Date,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
