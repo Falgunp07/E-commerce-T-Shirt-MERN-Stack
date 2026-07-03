@@ -45,6 +45,13 @@ export default function Profile() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
+  // Redirect admin users to admin dashboard
+  useEffect(() => {
+    if (user && ['admin', 'catalog_manager', 'logistics_manager'].includes(user.role)) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     if (!user) return;
     const addresses = user.addresses?.length ? user.addresses.map((address) => ({ ...address })) : [emptyAddress()];
