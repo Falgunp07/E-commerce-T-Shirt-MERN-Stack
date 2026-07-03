@@ -369,6 +369,20 @@ app.get('/api/account/orders', requireAuth, async (req, res) => {
   }
 });
 
+app.get('/api/coupons', async (req, res) => {
+  try {
+    const now = new Date();
+    const coupons = await Coupon.find({
+      isActive: true,
+      activeFrom: { $lte: now },
+      activeTo: { $gte: now }
+    }).lean();
+    return res.json({ success: true, coupons });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 app.post('/api/coupons/validate', async (req, res) => {
   const code = String(req.body?.code || '').trim().toUpperCase();
   const total = Number(req.body?.total || 0);
