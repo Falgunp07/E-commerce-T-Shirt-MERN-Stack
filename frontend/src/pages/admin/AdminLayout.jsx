@@ -8,28 +8,50 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('authToken');
     const userData = localStorage.getItem('adminUser');
 
-    if (!token || !userData) {
+    if (!token) {
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminUser');
+    localStorage.removeItem('authToken');
       navigate('/admin/login');
-    } else {
-      const parsedUser = JSON.parse(userData);
-      if (!['admin', 'catalog_manager', 'logistics_manager'].includes(parsedUser.role)) {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminUser');
-        navigate('/admin/login');
-        return;
-      }
-      setUser(parsedUser);
+      return;
     }
+
+    if (!userData) {
+      fetch('http://localhost:5000/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && ['admin', 'catalog_manager', 'logistics_manager'].includes(data.user?.role)) {
+            localStorage.setItem('adminToken', token);
+            localStorage.setItem('adminUser', JSON.stringify(data.user));
+            setUser(data.user);
+          } else {
+            navigate('/admin/login');
+          }
+        })
+        .catch(() => navigate('/admin/login'));
+      return;
+    }
+
+    const parsedUser = JSON.parse(userData);
+    if (!['admin', 'catalog_manager', 'logistics_manager'].includes(parsedUser.role)) {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+    localStorage.removeItem('authToken');
+      navigate('/admin/login');
+      return;
+    }
+    setUser(parsedUser);
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('authToken');
     navigate('/admin/login');
   };
 

@@ -28,6 +28,7 @@ export default function AdminLogin() {
         }
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
+        localStorage.setItem('authToken', data.token);
         navigate('/admin/dashboard');
       } else {
         setError(data.message || 'Login failed. Please check credentials.');

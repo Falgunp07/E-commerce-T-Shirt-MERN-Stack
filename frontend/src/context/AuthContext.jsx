@@ -48,6 +48,10 @@ export function AuthProvider({ children }) {
     if (!response.ok) throw new Error(data.message || 'Unable to continue');
 
     localStorage.setItem('authToken', data.token);
+    if (['admin', 'catalog_manager', 'logistics_manager'].includes(data.user?.role)) {
+      localStorage.setItem('adminToken', data.token);
+      localStorage.setItem('adminUser', JSON.stringify(data.user));
+    }
     setUser(data.user);
     return data.user;
   }
@@ -62,6 +66,8 @@ export function AuthProvider({ children }) {
 
   function logout() {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
     setUser(null);
   }
 
