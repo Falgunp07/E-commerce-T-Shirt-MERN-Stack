@@ -6,3 +6,4 @@ backend/.env
 .env
 .DS_Store
 Thumbs.db
+*.log
