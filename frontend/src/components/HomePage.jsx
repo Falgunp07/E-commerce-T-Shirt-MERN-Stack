@@ -67,9 +67,9 @@ export default function HomePage() {
 		<main className="w-full">
 			<section className="w-full bg-black py-3 text-white">
 				<div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-2 px-4 text-center sm:flex-row sm:gap-4 sm:px-6 lg:px-8">
-					<span className="text-sm font-semibold uppercase tracking-[0.28em] text-green-400">Coupon Code</span>
+					<span className="text-sm font-semibold uppercase tracking-[0.28em] text-green-400">Exclusive Codes</span>
 					<p className="text-sm font-medium text-white/90">
-						Use <span className="font-bold text-green-400">THREAD50</span> and get <span className="font-extrabold text-red-500">50% OFF</span> on your first custom order.
+						Use <span className="font-bold text-green-400">WELCOME10</span> for 10% OFF or <span className="font-bold text-amber-300">FLAT200</span> for ₹200 OFF at checkout!
 					</p>
 				</div>
 			</section>

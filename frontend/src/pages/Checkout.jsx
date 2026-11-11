@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
 function formatPrice(v) {
@@ -8,8 +10,10 @@ function formatPrice(v) {
 
 export default function Checkout() {
   const { cart, total, clear, addItem, updateItemQty, removeItem } = useCart();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [orderPlacedDetails, setOrderPlacedDetails] = useState(null);
   const [coupons, setCoupons] = useState([]);
   const [customer, setCustomer] = useState({ name: '', phone: '', address: '', postcode: '' });
   const [fieldErrors, setFieldErrors] = useState({});
@@ -26,6 +30,18 @@ export default function Checkout() {
   });
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [editingAddressId, setEditingAddressId] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      const defAddr = user.addresses?.find((a) => a.isDefault) || user.addresses?.[0];
+      setCustomer((prev) => ({
+        name: prev.name || user.name || '',
+        phone: prev.phone || user.phone || defAddr?.phone || '',
+        address: prev.address || (defAddr ? `${defAddr.line1}${defAddr.city ? ', ' + defAddr.city : ''}${defAddr.state ? ', ' + defAddr.state : ''}` : ''),
+        postcode: prev.postcode || defAddr?.postalCode || '',
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchCoupons = async () => {
@@ -192,21 +208,37 @@ export default function Checkout() {
         address: customer.address.trim(),
         postcode: customer.postcode.trim(),
       };
-      const res = await axios.post('http://localhost:5000/api/checkout', {
-        cart,
-        total: finalTotal,
-        customer: selectedAddress,
-        paymentMethod: 'COD',
-        couponCode: appliedCoupon,
-      });
+      const token = localStorage.getItem('authToken');
+      const res = await axios.post(
+        'http://localhost:5000/api/checkout',
+        {
+          cart,
+          total: finalTotal,
+          customer: {
+            name: selectedAddress.name,
+            phone: selectedAddress.phone,
+            address: `${selectedAddress.address}, ${selectedAddress.postcode}`,
+            email: user?.email || '',
+          },
+          paymentMethod: 'COD',
+          couponCode: appliedCoupon,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
       if (res.data?.success) {
-        setMessage(`Order placed — id: ${res.data.orderId} (COD)`);
+        setOrderPlacedDetails({
+          orderId: res.data.orderId,
+          amount: res.data.amount,
+          status: res.data.status,
+        });
         clear();
       } else {
-        setMessage('Order failed');
+        setMessage(res.data?.message || 'Order failed');
       }
     } catch (e) {
-      setMessage('Network error or server offline');
+      setMessage(e.response?.data?.message || 'Network error or server offline');
     } finally {
       setLoading(false);
     }
@@ -221,7 +253,46 @@ export default function Checkout() {
           <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">Fill in your delivery details and place a cash-on-delivery order in seconds.</p>
         </div>
 
-        {cart.length === 0 ? (
+        {orderPlacedDetails ? (
+          <div className="rounded-[2.5rem] border border-slate-200 bg-white p-10 text-center shadow-[0_20px_50px_rgba(15,23,42,0.08)] max-w-xl mx-auto">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span className="inline-flex rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-bold uppercase tracking-wider border border-emerald-200 mb-3">
+              Order Confirmed (Cash on Delivery)
+            </span>
+            <h2 className="text-3xl font-black text-brand-ink">Thank you for your order!</h2>
+            <p className="mt-2 text-slate-600 text-sm">
+              Your order has been recorded in the system and is queued for fulfillment.
+            </p>
+            <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-sm font-medium">
+              <div className="flex justify-between text-slate-600">
+                <span>Order ID:</span>
+                <span className="font-mono font-bold text-brand-ink">{orderPlacedDetails.orderId}</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Total Payable:</span>
+                <span className="font-bold text-emerald-600 font-mono">₹{orderPlacedDetails.amount}</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Payment Mode:</span>
+                <span className="font-semibold text-slate-800">Cash On Delivery</span>
+              </div>
+            </div>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              {user ? (
+                <Link to="/profile?tab=orders" className="inline-flex justify-center items-center rounded-full bg-black px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition">
+                  Track in My Orders
+                </Link>
+              ) : null}
+              <Link to="/shop" className="inline-flex justify-center items-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                Continue Shopping
+              </Link>
+            </div>
+          </div>
+        ) : cart.length === 0 ? (
           <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
             <h2 className="text-2xl font-black text-brand-ink">Your cart is empty</h2>
             <p className="mt-2 text-slate-600">Add a product first, then come back here to complete the COD order.</p>

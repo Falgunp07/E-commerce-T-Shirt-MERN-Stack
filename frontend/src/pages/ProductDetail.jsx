@@ -82,11 +82,11 @@ export default function ProductDetail() {
   }
 
   function handleAdd() {
-    addItem({ id: product._id, title: product.title, price: product.price, size });
+    addItem({ id: product._id, title: product.title, price: product.price, size, color: product.color, img: displayedSrc || product.img });
   }
 
   function handleInc() {
-    addItem({ id: product._id, title: product.title, price: product.price, size, qty: 1 });
+    addItem({ id: product._id, title: product.title, price: product.price, size, color: product.color, img: displayedSrc || product.img, qty: 1 });
   }
 
   function handleDec() {
