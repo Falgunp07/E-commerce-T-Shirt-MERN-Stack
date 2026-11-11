@@ -27,22 +27,29 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Health Check
-app.get('/api/health', (req, res) => {
+// Root & Health Check
+app.get(['/', '/api', '/health', '/api/health'], (req, res) => {
   res.json({
     success: true,
     message: 'ThreadLab backend is running',
     timestamp: new Date(),
+    endpoints: {
+      health: '/api/health',
+      products: '/api/products',
+      coupons: '/api/coupons',
+      orders: '/api/orders',
+      auth: '/api/auth'
+    }
   });
 });
 
-// Mount Modular Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/account', accountRoutes);
-app.use('/api/coupons', couponRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api', orderRoutes);
-app.use('/api/admin', adminRoutes);
+// Mount Modular Routes (supports both /api/path and /path)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/account', '/account'], accountRoutes);
+app.use(['/api/coupons', '/coupons'], couponRoutes);
+app.use(['/api/products', '/products'], productRoutes);
+app.use(['/api', '/'], orderRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
 
 // Start standalone server locally (Vercel automatically exports and manages the app)
 if (!process.env.VERCEL) {
