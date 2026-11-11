@@ -13,6 +13,11 @@ const OrderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   cart: [OrderItemSchema],
   amount: Number,
+  baseAmount: { type: Number, default: 0 },
+  taxAmount: { type: Number, default: 0 },
+  totalCostBasis: { type: Number, default: 0 },
+  couponUsed: { type: String, default: '' },
+  couponDiscount: { type: Number, default: 0 },
   customer: {
     name: String,
     email: String,
