@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { FiHeart } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 // Featured will be loaded from backend (top 3 products)
 
@@ -26,7 +27,7 @@ export default function HomePage() {
 
 	useEffect(() => {
 		let mounted = true;
-		fetch('http://localhost:5000/api/products')
+		fetch(`${API_BASE_URL}/api/products`)
 			.then((r) => r.json())
 			.then((data) => {
 				if (!mounted) return;

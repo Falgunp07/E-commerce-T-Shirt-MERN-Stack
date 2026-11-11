@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -17,7 +18,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/orders', { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) { setOrders(data.orders); } else { setError(data.message || 'Failed to fetch order list'); }
     } catch (err) { setError('Cannot connect to order service API'); } finally { setLoading(false); }
@@ -25,7 +26,7 @@ export default function AdminOrders() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ status: newStatus }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ status: newStatus }) });
       const data = await res.json();
       if (data.success) { fetchOrders(); } else { alert(data.message || 'Error updating status'); }
     } catch (err) { alert('Network error'); }
@@ -33,7 +34,7 @@ export default function AdminOrders() {
 
   const handleSimulateReturnRequest = async (orderId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: 'return_requested', reason: 'Incorrect size, T-shirt is too loose.' }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: 'return_requested', reason: 'Incorrect size, T-shirt is too loose.' }) });
       const data = await res.json();
       if (data.success) { fetchOrders(); } else { alert(data.message || 'Error starting return simulator'); }
     } catch (err) { alert('Network error'); }
@@ -41,7 +42,7 @@ export default function AdminOrders() {
 
   const handleSchedulePickup = async (orderId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: 'pickup_scheduled' }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: 'pickup_scheduled' }) });
       const data = await res.json();
       if (data.success) { fetchOrders(); }
     } catch (err) { alert('Network error'); }
@@ -52,7 +53,7 @@ export default function AdminOrders() {
     if (!selectedRmaOrder) return;
     const targetStatus = qcRating === 'passed' ? 'refunded' : 'rejected';
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${selectedRmaOrder._id}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: targetStatus, qcStatus: qcRating, reason: qcComment || 'QC evaluation completed' }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders/${selectedRmaOrder._id}/rma`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ rmaStatus: targetStatus, qcStatus: qcRating, reason: qcComment || 'QC evaluation completed' }) });
       const data = await res.json();
       if (data.success) { setSelectedRmaOrder(null); setQcComment(''); fetchOrders(); } else { alert(data.message || 'Error processing QC evaluation'); }
     } catch (err) { alert('Network error'); }
@@ -60,7 +61,7 @@ export default function AdminOrders() {
 
   const downloadCsv = async (endpoint, fileName) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/export/${endpoint}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/export/${endpoint}`, { headers: { 'Authorization': `Bearer ${token}` } });
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove();

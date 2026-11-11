@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function AdminLayout() {
     }
 
     if (!userData) {
-      fetch('http://localhost:5000/api/auth/me', {
+      fetch(`${API_BASE_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then((res) => res.json())

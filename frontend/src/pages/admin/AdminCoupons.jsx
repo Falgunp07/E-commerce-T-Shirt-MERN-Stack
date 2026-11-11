@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState([]);
@@ -23,7 +24,7 @@ export default function AdminCoupons() {
   const fetchCoupons = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/coupons', { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/coupons`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) { setCoupons(data.coupons); } else { setError(data.message || 'Failed to fetch coupon matrix.'); }
     } catch (err) { setError('Cannot connect to coupon engine service.'); } finally { setLoading(false); }
@@ -50,7 +51,7 @@ export default function AdminCoupons() {
     e.preventDefault();
     const payload = { code: code.toUpperCase(), discountType, discountValue: Number(discountValue), minimumCartValue: Number(minimumCartValue), maxDiscountLimit: Number(maxDiscountLimit), perUserLimit: Number(perUserLimit), activeFrom: new Date(activeFrom), activeTo: new Date(activeTo), isActive };
     try {
-      const url = editingCoupon ? `http://localhost:5000/api/admin/coupons/${editingCoupon._id}` : 'http://localhost:5000/api/admin/coupons';
+      const url = editingCoupon ? `${API_BASE_URL}/api/admin/coupons/${editingCoupon._id}` : `${API_BASE_URL}/api/admin/coupons`;
       const method = editingCoupon ? 'PUT' : 'POST';
       const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
       const data = await res.json();
@@ -61,7 +62,7 @@ export default function AdminCoupons() {
   const handleDeleteCoupon = async (id) => {
     if (!window.confirm('Delete this coupon code permanently? Checkout codes will instantly deactivate.')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/coupons/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/coupons/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) { fetchCoupons(); } else { alert(data.message || 'Delete failed.'); }
     } catch (err) { alert('Server error.'); }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { FiHeart, FiLogOut, FiMail, FiMapPin, FiPackage, FiShield, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 import {
   validateAddress,
   validateName,
@@ -80,7 +81,7 @@ export default function Profile() {
     const token = localStorage.getItem('authToken');
     setOrdersLoading(true);
     setOrdersError('');
-    fetch('http://localhost:5000/api/account/orders', {
+    fetch(`${API_BASE_URL}/api/account/orders`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (response) => {

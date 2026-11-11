@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight, FiHeart } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { API_BASE_URL } from '../config/api';
 
 function formatPrice(v) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -21,7 +22,7 @@ export default function ProductDetail() {
     let mounted = true;
     if (!id) return;
     setLoading(true);
-    fetch(`http://localhost:5000/api/products/${id}`)
+    fetch(`${API_BASE_URL}/api/products/${id}`)
       .then((r) => r.json())
       .then((data) => {
         if (!mounted) return;

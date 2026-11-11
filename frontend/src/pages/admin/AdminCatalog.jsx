@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminCatalog() {
   const [products, setProducts] = useState([]);
@@ -35,7 +36,7 @@ export default function AdminCatalog() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/products', { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/products`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) { setProducts(data.products); } else { setError(data.message || 'Failed to fetch catalog.'); }
     } catch (err) { setError('Cannot connect to backend server.'); } finally { setLoading(false); }
@@ -125,7 +126,7 @@ export default function AdminCatalog() {
     const payload = { title, description, category, subCategory, taxSlab: Number(taxSlab), price: derivedPrice, color: derivedColor, img: productImages[0] || img, images: [...productImages, ...(firstVariant.images || [])].filter((v, i, a) => a.indexOf(v) === i), variants };
     console.log('Saving product payload:', JSON.stringify(payload, null, 2));
     try {
-      const url = editingProduct ? `http://localhost:5000/api/admin/products/${editingProduct._id}` : 'http://localhost:5000/api/admin/products';
+      const url = editingProduct ? `${API_BASE_URL}/api/admin/products/${editingProduct._id}` : `${API_BASE_URL}/api/admin/products`;
       const method = editingProduct ? 'PUT' : 'POST';
       const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
       const raw = await res.text();
@@ -137,7 +138,7 @@ export default function AdminCatalog() {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm('Are you absolutely sure you want to hard delete this product and all its child SKUs? This action is irreversible.')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) { fetchProducts(); } else { alert(data.message || 'Delete operation failed.'); }
     } catch (err) { alert('Server network error.'); }

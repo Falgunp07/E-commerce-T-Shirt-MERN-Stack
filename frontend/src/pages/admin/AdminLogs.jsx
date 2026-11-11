@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminLogs() {
   const [logs, setLogs] = useState([]);
@@ -15,7 +16,7 @@ export default function AdminLogs() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/logs', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/logs`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminCMS() {
   const [banners, setBanners] = useState([]);
@@ -18,10 +19,10 @@ export default function AdminCMS() {
   const fetchCmsData = async () => {
     setLoading(true);
     try {
-      const resCms = await fetch('http://localhost:5000/api/admin/cms', { headers: { 'Authorization': `Bearer ${token}` } });
+      const resCms = await fetch(`${API_BASE_URL}/api/admin/cms`, { headers: { 'Authorization': `Bearer ${token}` } });
       const dataCms = await resCms.json();
       if (dataCms.success) { setBanners(dataCms.cms.banners || []); setBentoGridOrder(dataCms.cms.bentoGridOrder || []); } else { setError(dataCms.message || 'Error loading CMS configurations'); }
-      const resProd = await fetch('http://localhost:5000/api/products');
+      const resProd = await fetch(`${API_BASE_URL}/api/products`);
       const dataProd = await resProd.json();
       if (dataProd.success) { setProducts(dataProd.products || []); }
     } catch (err) { setError('Cannot connect to CMS configuration service API'); } finally { setLoading(false); }
@@ -29,7 +30,7 @@ export default function AdminCMS() {
 
   const handleSaveBanners = async (updatedBanners) => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/cms', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ key: 'home_banners', banners: updatedBanners }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/cms`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ key: 'home_banners', banners: updatedBanners }) });
       const data = await res.json();
       if (data.success) { setBanners(data.config.banners); } else { alert(data.message || 'Failed to update banners config'); }
     } catch (err) { alert('Network error'); }
@@ -55,7 +56,7 @@ export default function AdminCMS() {
 
   const handleSaveBentoOrder = async (orderList) => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/cms', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ key: 'bento_grid_priority', bentoGridOrder: orderList }) });
+      const res = await fetch(`${API_BASE_URL}/api/admin/cms`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ key: 'bento_grid_priority', bentoGridOrder: orderList }) });
       const data = await res.json();
       if (data.success) { setBentoGridOrder(data.config.bentoGridOrder); alert('Homepage Bento Grid Order Priority Updated Successfully!'); } else { alert(data.message || 'Failed to update bento config'); }
     } catch (err) { alert('Network error'); }

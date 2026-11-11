@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 import axios from 'axios';
 
 function formatPrice(v) {
@@ -46,7 +47,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/coupons');
+        const res = await fetch(`${API_BASE_URL}/api/coupons`);
         const data = await res.json();
         if (data.success && Array.isArray(data.coupons)) {
           setCoupons(data.coupons);
@@ -210,7 +211,7 @@ export default function Checkout() {
       };
       const token = localStorage.getItem('authToken');
       const res = await axios.post(
-        'http://localhost:5000/api/checkout',
+        `${API_BASE_URL}/api/checkout`,
         {
           cart,
           total: finalTotal,

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 function formatPrice(value) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
@@ -12,7 +13,7 @@ export default function AdminCustomers() {
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
-    fetch('http://localhost:5000/api/admin/customers', {
+    fetch(`${API_BASE_URL}/api/admin/customers`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (response) => {

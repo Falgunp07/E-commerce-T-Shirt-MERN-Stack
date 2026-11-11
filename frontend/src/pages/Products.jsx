@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { FiHeart } from 'react-icons/fi';
+import { API_BASE_URL } from '../config/api';
 
 // Fetch products from backend API instead of using local mock data
 // Backend endpoint: GET /api/products
@@ -39,7 +40,7 @@ export default function Products() {
 
   useEffect(() => {
     let mounted = true;
-    fetch('http://localhost:5000/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then((r) => r.json())
       .then((data) => {
         if (!mounted) return;

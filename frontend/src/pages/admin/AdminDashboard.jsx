@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -10,7 +11,7 @@ export default function AdminDashboard() {
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('adminToken');
-        const resStats = await fetch('http://localhost:5000/api/admin/stats', {
+        const resStats = await fetch(`${API_BASE_URL}/api/admin/stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataStats = await resStats.json();
@@ -19,7 +20,7 @@ export default function AdminDashboard() {
         } else {
           setError(dataStats.message || 'Failed to fetch analytics statistics');
         }
-        const resProd = await fetch('http://localhost:5000/api/products');
+        const resProd = await fetch(`${API_BASE_URL}/api/products`);
         const dataProd = await resProd.json();
         if (dataProd.success) {
           const lowStock = [];
