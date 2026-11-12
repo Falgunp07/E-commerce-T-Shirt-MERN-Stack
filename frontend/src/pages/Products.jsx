@@ -281,11 +281,11 @@ export default function Products() {
                           e.stopPropagation();
                           navigate('/cart');
                         }}
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-ink text-white shadow-sm transition hover:scale-105 hover:bg-slate-800 cursor-pointer"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-black shadow-xs transition hover:border-black hover:bg-slate-50 cursor-pointer"
                         title="View Cart"
                         aria-label="View Cart"
                       >
-                        <FiShoppingBag className="text-sm" />
+                        <FiShoppingBag className="text-base text-black" />
                       </button>
                     </div>
                   ) : (

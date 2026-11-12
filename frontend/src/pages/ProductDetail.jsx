@@ -188,11 +188,11 @@ export default function ProductDetail() {
                     <button
                       type="button"
                       onClick={() => navigate('/cart')}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black text-white shadow-sm transition hover:bg-slate-800 hover:scale-105 cursor-pointer"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-black shadow-xs transition hover:border-black hover:bg-slate-50 cursor-pointer"
                       title="View Cart"
                       aria-label="View Cart"
                     >
-                      <FiShoppingBag className="text-base" />
+                      <FiShoppingBag className="text-base text-black" />
                     </button>
                   </div>
                 ) : (

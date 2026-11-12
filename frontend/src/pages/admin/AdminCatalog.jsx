@@ -36,6 +36,25 @@ export default function AdminCatalog() {
     fetchProducts();
   }, []);
 
+  // Lock body scroll and listen for Escape key when modal is open
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+      }
+    }
+    if (editingProduct || showAddForm) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [editingProduct, showAddForm]);
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -116,7 +135,7 @@ export default function AdminCatalog() {
   const handleAddVariant = (e) => {
     e.preventDefault();
     if (!newVarColor || !newVarCost || !newVarPrice || !newVarMrp) { alert('Please fill out all variant parameters (Color, Cost, MRP, Price)'); return; }
-    const skuCode = `TL-${title.substring(0, 4).toUpperCase().replace(/\s+/g, '')}-${newVarColor.substring(0, 3).toUpperCase()}-${newVarSize}`;
+    const skuCode = `TL-${(title || 'PROD').substring(0, 4).toUpperCase().replace(/\s+/g, '')}-${newVarColor.substring(0, 3).toUpperCase()}-${newVarSize}`;
     const newVariant = { sku: skuCode, size: newVarSize, color: newVarColor, stock: Number(newVarStock), safetyThreshold: Number(newVarThreshold), costPrice: Number(newVarCost), mrp: Number(newVarMrp), price: Number(newVarPrice), images: [img] };
     if (variants.some(v => v.sku === skuCode)) { alert('A variant with this Size/Color SKU already exists in this product context.'); return; }
     setVariants([...variants, newVariant]); setNewVarColor('');
@@ -182,54 +201,59 @@ export default function AdminCatalog() {
         </div>
       )}
 
-      {/* Responsive Centered Modal Popup for Edit Matrix / Create Product */}
+      {/* Production-Grade Centered Modal Popup with High Z-Index */}
       {(editingProduct || showAddForm) && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm overflow-y-auto"
           onClick={(e) => { if (e.target === e.currentTarget) handleCloseModal(); }}
         >
-          <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl sm:rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-5 border-b border-slate-200 bg-slate-50/90 sticky top-0 z-20 backdrop-blur-md">
-              <div className="min-w-0 pr-3">
-                <h3 className="text-base sm:text-xl font-black text-slate-900 truncate">
-                  {editingProduct ? `Modify SKU Catalog: ${title || editingProduct.title}` : 'Build Brand New SKU'}
+          <div
+            className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header Bar - Always Fixed & Visible */}
+            <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 border-b border-slate-200 bg-white sticky top-0 z-30 shrink-0 shadow-2xs">
+              <div className="min-w-0 pr-4">
+                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-indigo-700 border border-indigo-200">
+                  SKU Matrix Manager
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 mt-1 truncate">
+                  {editingProduct ? `Edit Matrix: ${title || editingProduct.title}` : 'Build Brand New SKU'}
                 </h3>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate">Product configuration & child variant inventory matrix</p>
               </div>
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="p-1.5 sm:p-2 rounded-full hover:bg-slate-200/80 text-slate-400 hover:text-slate-700 transition cursor-pointer shrink-0"
-                title="Close modal"
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-800 transition cursor-pointer shrink-0"
+                title="Close modal (Esc)"
               >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Modal Scrollable Body */}
-            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1 space-y-6">
+            <div className="p-5 sm:p-7 md:p-8 overflow-y-auto flex-1 space-y-6">
               <form id="productForm" onSubmit={handleSaveProduct} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
-                  {/* Basic Details */}
+                  {/* Left Column: Basic Details */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Product Title</label>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Product Title</label>
                       <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="Midnight Manga Oversized Tee" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</label>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
                       <textarea required rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="100% premium cotton tee..." />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Sub-Category</label>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Sub-Category</label>
                         <input type="text" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden" placeholder="Oversized" />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">GST Tax Slab</label>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">GST Tax Slab</label>
                         <select value={taxSlab} onChange={(e) => setTaxSlab(Number(e.target.value))} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden">
                           <option value="5">5% GST (Low cost items)</option>
                           <option value="12">12% GST (Apparel standard)</option>
@@ -238,41 +262,54 @@ export default function AdminCatalog() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Product Images</label>
-                      <div className="mt-1 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3 sm:p-4">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Product Photos</label>
+                      <div className="mt-1 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3.5 sm:p-4">
                         <input
                           type="file"
                           accept="image/*"
                           multiple
                           onChange={handleImageFiles}
-                          className="block w-full text-xs sm:text-sm text-slate-600 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-600 file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-indigo-500 cursor-pointer"
+                          className="block w-full text-xs sm:text-sm text-slate-600 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-600 file:px-3.5 file:py-1.5 file:text-xs file:font-bold file:text-white hover:file:bg-indigo-500 cursor-pointer"
                         />
-                        <p className="mt-2.5 text-[11px] text-slate-500">Upload one or more product photos from your device.</p>
+                        <p className="mt-2 text-[11px] text-slate-500">Upload one or more photos from your device.</p>
                         {imageUploadError ? <p className="mt-2 text-xs font-semibold text-red-500">{imageUploadError}</p> : null}
                         <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                           {images.map((source, index) => (
-                            <div key={`${source.slice(0, 24)}-${index}`} className="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-                              <img src={source} alt={`Product preview ${index + 1}`} className="h-24 sm:h-28 w-full object-cover" />
+                            <div key={`${source.slice(0, 24)}-${index}`} className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100 h-24 sm:h-28 flex items-center justify-center">
+                              <img
+                                src={source}
+                                alt=""
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  if (e.currentTarget.nextSibling) e.currentTarget.nextSibling.style.display = 'flex';
+                                }}
+                                className="h-full w-full object-cover"
+                              />
+                              <div className="hidden flex-col items-center justify-center p-2 text-center text-[10px] text-slate-400">
+                                <svg className="w-5 h-5 mb-1 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                Image #{index + 1}
+                              </div>
                               <button
                                 type="button"
                                 onClick={() => removeImage(index)}
-                                className="absolute right-1.5 top-1.5 rounded-full bg-black/80 px-2 py-0.5 text-[9px] font-semibold text-white hover:bg-black transition cursor-pointer"
+                                className="absolute right-1.5 top-1.5 rounded-full bg-black/80 hover:bg-black text-white p-1 text-[9px] font-bold shadow-md transition cursor-pointer"
+                                title="Remove photo"
                               >
-                                Remove
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                               </button>
                             </div>
                           ))}
                         </div>
                         {!images.length && (
                           <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-center text-xs text-slate-400">
-                            No image uploaded yet. Add at least one photo to represent the product.
+                            No photo attached yet.
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Matrix Builder */}
+                  {/* Right Column: SKU Matrix Builder */}
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 space-y-4">
                     <h4 className="text-xs sm:text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">Add SKUs to Child Variant Matrix</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -284,7 +321,7 @@ export default function AdminCatalog() {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Color</label>
-                        <input type="text" value={newVarColor} onChange={(e) => setNewVarColor(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="Black, White, Neon" />
+                        <input type="text" value={newVarColor} onChange={(e) => setNewVarColor(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="e.g. Yellow, Black, Navy" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -300,15 +337,24 @@ export default function AdminCatalog() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Cost Price</label>
-                        <input type="number" value={newVarCost} onChange={(e) => setNewVarCost(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="500" />
+                        <div className="relative mt-1">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-slate-400 font-bold">₹</span>
+                          <input type="number" value={newVarCost} onChange={(e) => setNewVarCost(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white pl-6 pr-2 py-1.5 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden" placeholder="500" />
+                        </div>
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">MRP</label>
-                        <input type="number" value={newVarMrp} onChange={(e) => setNewVarMrp(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="1800" />
+                        <div className="relative mt-1">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-slate-400 font-bold">₹</span>
+                          <input type="number" value={newVarMrp} onChange={(e) => setNewVarMrp(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white pl-6 pr-2 py-1.5 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden" placeholder="1800" />
+                        </div>
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Selling Price</label>
-                        <input type="number" value={newVarPrice} onChange={(e) => setNewVarPrice(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="1299" />
+                        <div className="relative mt-1">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-xs text-slate-400 font-bold">₹</span>
+                          <input type="number" value={newVarPrice} onChange={(e) => setNewVarPrice(e.target.value)} className="w-full rounded-lg border border-slate-300 bg-white pl-6 pr-2 py-1.5 text-xs text-slate-900 focus:border-indigo-500 focus:outline-hidden" placeholder="1299" />
+                        </div>
                       </div>
                     </div>
                     {newVarPrice && (
@@ -318,11 +364,18 @@ export default function AdminCatalog() {
                         <div className="flex justify-between"><span>GST Amount Collected ({taxSlab}%):</span><span>₹{calculateTaxSplit(newVarPrice).tax}</span></div>
                       </div>
                     )}
-                    <button type="button" onClick={handleAddVariant} className="w-full py-2.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-200 hover:text-slate-900 transition-colors text-xs font-bold cursor-pointer">Insert SKU into Matrix List</button>
+                    <button
+                      type="button"
+                      onClick={handleAddVariant}
+                      className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl transition text-xs font-bold cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                      Add Variant to Matrix List
+                    </button>
                   </div>
                 </div>
 
-                {/* SKU Variants Table */}
+                {/* SKU Variants Table with Horizontal Scrolling */}
                 <div className="space-y-2">
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900">Active Product SKUs Matrix ({variants.length})</h4>
                   {variants.length > 0 ? (
@@ -343,17 +396,17 @@ export default function AdminCatalog() {
                         <tbody className="divide-y divide-slate-100 text-slate-700">
                           {variants.map((v, idx) => (
                             <tr key={idx} className="hover:bg-slate-50">
-                              <td className="px-3.5 py-2.5 font-mono text-[11px]">{v.sku}</td>
-                              <td className="px-3.5 py-2.5"><span className="px-1.5 py-0.5 rounded bg-slate-100 font-bold text-slate-700 text-[10px]">{v.size}</span></td>
-                              <td className="px-3.5 py-2.5">{v.color}</td>
+                              <td className="px-3.5 py-2.5 font-mono text-[11px] font-bold text-slate-800">{v.sku}</td>
+                              <td className="px-3.5 py-2.5"><span className="px-2 py-0.5 rounded bg-slate-100 font-bold text-slate-700 text-[10px]">{v.size}</span></td>
+                              <td className="px-3.5 py-2.5 font-medium">{v.color}</td>
                               <td className="px-3.5 py-2.5">
-                                <input type="number" value={v.stock} onChange={(e) => { const updated = [...variants]; updated[idx].stock = Number(e.target.value); setVariants(updated); }} className="w-16 bg-slate-50 border border-slate-300 rounded px-1 text-center text-slate-900 text-xs" />
+                                <input type="number" value={v.stock} onChange={(e) => { const updated = [...variants]; updated[idx].stock = Number(e.target.value); setVariants(updated); }} className="w-16 bg-slate-50 border border-slate-300 rounded px-1.5 py-1 text-center text-slate-900 text-xs font-bold" />
                               </td>
                               <td className="px-3.5 py-2.5">₹{v.costPrice}</td>
                               <td className="px-3.5 py-2.5 text-slate-400 line-through">₹{v.mrp}</td>
                               <td className="px-3.5 py-2.5 font-bold text-emerald-600">₹{v.price}</td>
                               <td className="px-3.5 py-2.5 text-right">
-                                <button type="button" onClick={() => removeVariant(idx)} className="text-red-500 hover:text-red-600 text-[11px] cursor-pointer font-semibold">Remove</button>
+                                <button type="button" onClick={() => removeVariant(idx)} className="px-2.5 py-1 rounded-lg text-red-600 hover:bg-red-50 text-[11px] cursor-pointer font-bold transition">Remove</button>
                               </td>
                             </tr>
                           ))}
@@ -369,10 +422,22 @@ export default function AdminCatalog() {
               </form>
             </div>
 
-            {/* Modal Footer */}
-            <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 justify-end items-stretch sm:items-center px-4 sm:px-8 py-3.5 sm:py-4 border-t border-slate-200 bg-slate-50/90 sticky bottom-0 z-20 backdrop-blur-md">
-              <button type="button" onClick={handleCloseModal} className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer text-xs sm:text-sm font-semibold">Discard Changes</button>
-              <button type="submit" form="productForm" className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-colors cursor-pointer text-xs sm:text-sm shadow-md shadow-indigo-500/20">Save Catalog Product</button>
+            {/* Modal Footer - Always Fixed & Visible */}
+            <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end items-stretch sm:items-center px-6 py-4 sm:px-8 border-t border-slate-200 bg-slate-50/95 sticky bottom-0 z-30 shrink-0 backdrop-blur-md">
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 transition text-xs sm:text-sm font-bold cursor-pointer"
+              >
+                Discard Changes
+              </button>
+              <button
+                type="submit"
+                form="productForm"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition text-xs sm:text-sm shadow-md shadow-indigo-500/25 cursor-pointer"
+              >
+                Save Catalog Product
+              </button>
             </div>
           </div>
         </div>
