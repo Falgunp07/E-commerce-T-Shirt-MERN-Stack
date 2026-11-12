@@ -180,17 +180,46 @@ export default function AdminOrders() {
                     <p className="text-slate-400 italic">No courier tracking manifested yet.</p>
                   )}
                 </div>
-                <div className="flex gap-2">
-                  {order.status === 'pending' && (<button onClick={() => updateOrderStatus(order._id, 'manifested')} className="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-colors cursor-pointer">Manifest Shiprocket Courier</button>)}
-                  {order.status === 'manifested' && (<>
-                    <button onClick={() => setSelectedLabelOrder(order)} className="px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition-colors cursor-pointer">Print Shipping Label</button>
-                    <button onClick={() => updateOrderStatus(order._id, 'shipped')} className="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-500 transition-colors cursor-pointer">Ship Dispatch</button>
-                  </>)}
-                  {order.status === 'shipped' && (<button onClick={() => updateOrderStatus(order._id, 'delivered')} className="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-400 transition-colors cursor-pointer">Mark as Delivered</button>)}
-                  {order.status === 'delivered' && order.rma?.status === 'none' && (<button onClick={() => handleSimulateReturnRequest(order._id)} className="px-3.5 py-1.5 rounded-lg border border-red-300 text-red-500 hover:bg-red-50 text-xs font-semibold transition-colors cursor-pointer">Simulate Return Request</button>)}
-                  {order.rma && order.rma.status === 'return_requested' && (<button onClick={() => handleSchedulePickup(order._id)} className="px-3.5 py-1.5 rounded-lg bg-amber-600 text-white font-bold text-xs hover:bg-amber-500 transition-colors cursor-pointer">Schedule Return Pickup</button>)}
-                  {order.rma && order.rma.status === 'pickup_scheduled' && (<button onClick={() => setSelectedRmaOrder(order)} className="px-3.5 py-1.5 rounded-lg bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors cursor-pointer">Evaluate Warehouse QC</button>)}
-                  {order.rma && order.rma.status === 'refunded' && (<span className="text-[10px] text-emerald-600 font-bold">Refunded &bull; Txn: {order.rma.refundTxnId}</span>)}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Order Status:</span>
+                    <select
+                      value={order.status}
+                      onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                      className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-xs focus:border-indigo-500 focus:outline-hidden cursor-pointer"
+                    >
+                      <option value="pending">Order Placed (Pending)</option>
+                      <option value="manifested">Ready to Ship (Manifested)</option>
+                      <option value="shipped">In Transit (Shipped)</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="returned">Refunded / Returned</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedLabelOrder(order)}
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+                  >
+                    <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print Label
+                  </button>
+                  {order.rma && order.rma.status === 'pickup_scheduled' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRmaOrder(order)}
+                      className="px-3.5 py-1.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 transition-colors cursor-pointer"
+                    >
+                      Evaluate QC
+                    </button>
+                  )}
+                  {order.rma && order.rma.status === 'refunded' && (
+                    <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+                      Refunded • Txn: {order.rma.refundTxnId}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

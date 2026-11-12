@@ -438,16 +438,45 @@ export default function Profile() {
                         <div className="mt-3 text-lg font-black text-brand-ink">{formatPrice(order.amount)}</div>
                       </div>
                     </div>
-                    <div className="mt-4 space-y-3">
-                      {(order.cart || []).map((item, index) => (
-                        <div key={`${order._id}-${index}`} className="flex items-center justify-between gap-3 text-sm text-slate-600">
-                          <div>
-                            <div className="font-semibold text-brand-ink">{item.title}</div>
-                            <div className="mt-1">Qty {item.qty}{item.size ? ` • Size ${item.size}` : ''}</div>
-                          </div>
-                          <div className="font-semibold text-brand-ink">{formatPrice((item.price || 0) * (item.qty || 1))}</div>
-                        </div>
-                      ))}
+                    <div className="mt-4 space-y-2">
+                      {(order.cart || []).map((item, index) => {
+                        const productId = item.id || item._id;
+                        const isCustom = typeof productId === 'string' && productId.startsWith('custom-');
+                        const productLink = isCustom ? '/custom-print' : productId ? `/product/${productId}` : '/shop';
+
+                        return (
+                          <Link
+                            key={`${order._id}-${index}`}
+                            to={productLink}
+                            className="flex items-center justify-between gap-3 text-sm text-slate-600 p-2.5 rounded-xl hover:bg-white transition group border border-transparent hover:border-slate-200 cursor-pointer"
+                            title="Click to view product details"
+                          >
+                            <div className="flex items-center gap-3">
+                              {item.img && (
+                                <img
+                                  src={item.img}
+                                  alt={item.title}
+                                  className="h-12 w-12 rounded-lg object-contain bg-white border border-slate-200 shrink-0"
+                                />
+                              )}
+                              <div>
+                                <div className="font-semibold text-brand-ink group-hover:text-indigo-600 transition flex items-center gap-1.5">
+                                  {item.title}
+                                  <span className="text-xs text-indigo-500 font-bold opacity-0 group-hover:opacity-100 transition">
+                                    →
+                                  </span>
+                                </div>
+                                <div className="mt-0.5 text-xs text-slate-500">
+                                  Qty {item.qty}
+                                  {item.size ? ` • Size ${item.size}` : ''}
+                                  {item.color ? ` • ${item.color}` : ''}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="font-bold text-brand-ink">{formatPrice((item.price || 0) * (item.qty || 1))}</div>
+                          </Link>
+                        );
+                      })}
                     </div>
                     <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-slate-200 pt-4 text-sm text-slate-500 gap-3">
                       <div>

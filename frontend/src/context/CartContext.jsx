@@ -11,6 +11,7 @@ export function CartProvider({ children }) {
       return [];
     }
   });
+  const [lastAddedItem, setLastAddedItem] = useState(null);
 
   useEffect(() => {
     try {
@@ -30,6 +31,11 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...item, size: itemSize, qty: item.qty || 1 }];
     });
+    setLastAddedItem({ ...item, timestamp: Date.now() });
+  }
+
+  function clearLastAdded() {
+    setLastAddedItem(null);
   }
 
   function removeItem(id, size) {
@@ -51,12 +57,13 @@ export function CartProvider({ children }) {
 
   function clear() {
     setCart([]);
+    setLastAddedItem(null);
   }
 
   const total = cart.reduce((s, p) => s + (p.price || 0) * (p.qty || 1), 0);
 
   return (
-    <CartContext.Provider value={{ cart, addItem, removeItem, updateItemQty, clear, total }}>
+    <CartContext.Provider value={{ cart, addItem, removeItem, updateItemQty, clear, total, lastAddedItem, clearLastAdded }}>
       {children}
     </CartContext.Provider>
   );
