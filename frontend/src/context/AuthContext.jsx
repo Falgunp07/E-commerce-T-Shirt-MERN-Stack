@@ -57,6 +57,20 @@ export function AuthProvider({ children }) {
     return data.user;
   }
 
+  async function syncClerkUser({ clerkId, email, name, avatar }) {
+    const response = await fetch(`${API_URL}/auth/clerk-sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clerkId, email, name, avatar }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Unable to sync Clerk user');
+
+    localStorage.setItem('authToken', data.token);
+    setUser(data.user);
+    return data.user;
+  }
+
   function login(credentials) {
     return authenticate('login', credentials);
   }
@@ -70,6 +84,9 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
     setUser(null);
+    if (typeof window !== 'undefined' && window.Clerk && typeof window.Clerk.signOut === 'function') {
+      window.Clerk.signOut().catch(() => {});
+    }
   }
 
   async function updateProfile(profile) {
@@ -104,7 +121,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, updateProfile, changePassword }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, updateProfile, changePassword, syncClerkUser }}>
       {children}
     </AuthContext.Provider>
   );

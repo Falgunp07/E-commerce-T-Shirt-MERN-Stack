@@ -19,7 +19,9 @@ const AddressSchema = new mongoose.Schema(
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
+  clerkId: { type: String, default: null, sparse: true },
+  avatar: { type: String, default: '' },
   phone: { type: String, default: '' },
   addresses: { type: [AddressSchema], default: [] },
   role: {

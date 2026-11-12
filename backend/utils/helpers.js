@@ -30,6 +30,7 @@ export function publicUser(user) {
     name: user.name,
     email: user.email,
     phone: user.phone || '',
+    avatar: user.avatar || '',
     addresses,
     role: user.role,
     createdAt: user.createdAt,

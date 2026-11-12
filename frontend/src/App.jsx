@@ -24,6 +24,10 @@ import AdminLogs from './pages/admin/AdminLogs';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
+import { ClerkProvider } from '@clerk/clerk-react';
+import ClerkSync from './components/ClerkSync';
+
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
 function NotFound() {
   return (
@@ -72,9 +76,10 @@ function AppShell() {
 }
 
 function App() {
-  return (
+  const content = (
     <BrowserRouter>
       <AuthProvider>
+        {CLERK_PUBLISHABLE_KEY ? <ClerkSync /> : null}
         <WishlistProvider>
           <CartProvider>
             <AppShell />
@@ -83,6 +88,16 @@ function App() {
       </AuthProvider>
     </BrowserRouter>
   );
+
+  if (CLERK_PUBLISHABLE_KEY) {
+    return (
+      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+        {content}
+      </ClerkProvider>
+    );
+  }
+
+  return content;
 }
 
 export default App;

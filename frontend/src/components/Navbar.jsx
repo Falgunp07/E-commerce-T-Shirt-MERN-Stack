@@ -104,12 +104,16 @@ function Navbar() {
           <div className="relative" ref={profileMenuRef}>
             <button
               type="button"
-              className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full border transition hover:-translate-y-0.5 ${user ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
+              className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full border transition hover:-translate-y-0.5 overflow-hidden ${user ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
               aria-label={user ? 'Account menu' : 'Login menu'}
               aria-expanded={profileOpen}
               onClick={() => setProfileOpen((value) => !value)}
             >
-              <FiUser />
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.name} className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <FiUser />
+              )}
               {user && <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" aria-hidden="true" />}
             </button>
 

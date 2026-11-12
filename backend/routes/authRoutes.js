@@ -130,4 +130,45 @@ router.put('/password', requireAuth, async (req, res) => {
   }
 });
 
+// Clerk User Synchronization Endpoint
+router.post('/clerk-sync', async (req, res) => {
+  const clerkId = String(req.body?.clerkId || '').trim();
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const name = String(req.body?.name || '').trim();
+  const avatar = String(req.body?.avatar || '').trim();
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required from Clerk' });
+  }
+
+  try {
+    let user = await User.findOne({
+      $or: [
+        ...(clerkId ? [{ clerkId }] : []),
+        { email }
+      ]
+    });
+
+    if (user) {
+      if (clerkId && !user.clerkId) user.clerkId = clerkId;
+      if (avatar && (!user.avatar || user.avatar !== avatar)) user.avatar = avatar;
+      if (name && (!user.name || user.name === 'User')) user.name = name;
+      await user.save();
+    } else {
+      user = await User.create({
+        name: name || email.split('@')[0],
+        email,
+        clerkId: clerkId || null,
+        avatar: avatar || '',
+        role: 'customer'
+      });
+    }
+
+    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '7d' });
+    return res.json({ success: true, token, user: publicUser(user) });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 export default router;
