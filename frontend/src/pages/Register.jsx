@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FiUserPlus } from 'react-icons/fi';
-import { SignUp } from '@clerk/clerk-react';
+import { SignUp } from '@clerk/react';
 import { useAuth } from '../context/AuthContext';
 import { validateEmail, validateName, validatePassword } from '../utils/validation';
 

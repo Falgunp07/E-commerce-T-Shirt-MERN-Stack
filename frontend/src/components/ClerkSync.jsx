@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useUser, useClerk } from '@clerk/react';
 import { useAuth } from '../context/AuthContext';
 
 export default function ClerkSync() {
