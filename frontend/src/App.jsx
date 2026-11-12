@@ -50,8 +50,8 @@ function AppShell() {
         <Route path="/shop" element={<Products />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login/*" element={<Login />} />
+        <Route path="/register/*" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/custom-print" element={<CustomPrint />} />

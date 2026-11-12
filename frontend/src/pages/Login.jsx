@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (!authLoading && user) return <Navigate to="/profile" replace />;
+  if (!authLoading && user) return <Navigate to="/" replace />;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,7 +30,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login(form);
-      navigate(location.state?.from || '/profile', { replace: true });
+      navigate(location.state?.from || '/', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -52,7 +52,8 @@ export default function Login() {
               routing="path"
               path="/login"
               signUpUrl="/register"
-              fallbackRedirectUrl="/profile"
+              fallbackRedirectUrl="/"
+              forceRedirectUrl="/"
             />
           </div>
           <button
