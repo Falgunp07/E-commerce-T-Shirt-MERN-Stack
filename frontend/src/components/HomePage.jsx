@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiArrowRight } from 'react-icons/fi';
+import { FiArrowRight, FiHeart, FiShoppingBag } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { FiHeart } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
 
@@ -161,30 +160,44 @@ export default function HomePage() {
 
 												<div className="mt-5 flex items-center justify-center">
 													{qty > 0 ? (
-														<div className="inline-flex h-10 items-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm">
+														<div className="flex items-center gap-2">
+															<div className="inline-flex h-10 items-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm">
+																<button
+																	type="button"
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		if (qty <= 1) removeItem(p._id, null);
+																		else updateItemQty(p._id, null, qty - 1);
+																	}}
+																	className="flex h-10 w-10 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100 cursor-pointer"
+																	aria-label={`Remove one ${p.title} from cart`}
+																>
+																	-
+																</button>
+																<span className="flex h-10 min-w-9 items-center justify-center bg-black px-2.5 text-xs font-bold text-white">{qty}</span>
+																<button
+																	type="button"
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
+																	}}
+																	className="flex h-10 w-10 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100 cursor-pointer"
+																	aria-label={`Add one more ${p.title} to cart`}
+																>
+																	+
+																</button>
+															</div>
 															<button
 																type="button"
 																onClick={(e) => {
 																	e.stopPropagation();
-																	if (qty <= 1) removeItem(p._id, null);
-																	else updateItemQty(p._id, null, qty - 1);
+																	navigate('/cart');
 																}}
-																className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
-																aria-label={`Remove one ${p.title} from cart`}
+																className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-ink text-white shadow-sm transition hover:scale-105 hover:bg-slate-800 cursor-pointer"
+																title="View Cart"
+																aria-label="View Cart"
 															>
-																-
-															</button>
-															<span className="flex h-10 min-w-12 items-center justify-center bg-black px-3 text-sm font-bold text-white">{qty}</span>
-															<button
-																type="button"
-																onClick={(e) => {
-																	e.stopPropagation();
-																	addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
-																}}
-																className="flex h-10 w-11 items-center justify-center text-lg font-bold text-brand-ink transition hover:bg-slate-100"
-																aria-label={`Add one more ${p.title} to cart`}
-															>
-																+
+																<FiShoppingBag className="text-sm" />
 															</button>
 														</div>
 													) : (
@@ -194,7 +207,7 @@ export default function HomePage() {
 																e.stopPropagation();
 																addItem({ id: p._id, title: p.title, price: p.price, img: p.img });
 															}}
-															className="inline-flex h-10 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow transition hover:opacity-90 whitespace-nowrap"
+															className="inline-flex h-10 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow transition hover:opacity-90 whitespace-nowrap cursor-pointer"
 														>
 															Add to cart
 														</button>

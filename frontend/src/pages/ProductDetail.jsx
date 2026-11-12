@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
-import { FiChevronLeft, FiChevronRight, FiHeart } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiHeart, FiShoppingBag } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { API_BASE_URL } from '../config/api';
@@ -23,7 +23,7 @@ export default function ProductDetail() {
     let mounted = true;
     if (!id) return;
     setLoading(true);
-    fetch(`${API_BASE_URL}/api/products/${id}`)
+    fetch(`${API_BASE_URL}/api/products/${encodeURIComponent(id)}`)
       .then((r) => r.json())
       .then((data) => {
         if (!mounted) return;
@@ -179,10 +179,21 @@ export default function ProductDetail() {
 
               <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
                 {qty > 0 ? (
-                  <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 bg-slate-50">
-                    <button onClick={handleDec} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-brand-ink hover:bg-slate-300 transition">-</button>
-                    <div className="flex-1 text-center text-sm font-semibold text-slate-700">In cart: {qty}</div>
-                    <button onClick={handleInc} className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white hover:bg-slate-800 transition">+</button>
+                  <div className="flex w-full items-center gap-2">
+                    <div className="flex flex-1 items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 bg-slate-50">
+                      <button onClick={handleDec} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-brand-ink hover:bg-slate-300 transition cursor-pointer">-</button>
+                      <div className="flex-1 text-center text-xs sm:text-sm font-semibold text-slate-700">In cart: {qty}</div>
+                      <button onClick={handleInc} className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white hover:bg-slate-800 transition cursor-pointer">+</button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/cart')}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black text-white shadow-sm transition hover:bg-slate-800 hover:scale-105 cursor-pointer"
+                      title="View Cart"
+                      aria-label="View Cart"
+                    >
+                      <FiShoppingBag className="text-base" />
+                    </button>
                   </div>
                 ) : (
                   <button onClick={handleAdd} className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition cursor-pointer">Add to cart</button>

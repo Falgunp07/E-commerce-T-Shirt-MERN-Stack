@@ -182,51 +182,55 @@ export default function AdminCatalog() {
         </div>
       )}
 
-      {/* Centered Modal Popup for Edit Matrix / Create Product */}
+      {/* Responsive Centered Modal Popup for Edit Matrix / Create Product */}
       {(editingProduct || showAddForm) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto"
+          onClick={(e) => { if (e.target === e.currentTarget) handleCloseModal(); }}
+        >
+          <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl sm:rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-200 bg-slate-50/80 sticky top-0 z-10 backdrop-blur-md">
-              <div>
-                <h3 className="text-xl font-black text-slate-900">
+            <div className="flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-5 border-b border-slate-200 bg-slate-50/90 sticky top-0 z-20 backdrop-blur-md">
+              <div className="min-w-0 pr-3">
+                <h3 className="text-base sm:text-xl font-black text-slate-900 truncate">
                   {editingProduct ? `Modify SKU Catalog: ${title || editingProduct.title}` : 'Build Brand New SKU'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">Product configuration & child variant inventory matrix</p>
+                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate">Product configuration & child variant inventory matrix</p>
               </div>
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="p-2 rounded-full hover:bg-slate-200/80 text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-full hover:bg-slate-200/80 text-slate-400 hover:text-slate-700 transition cursor-pointer shrink-0"
                 title="Close modal"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Modal Scrollable Body */}
-            <div className="p-8 overflow-y-auto flex-1 space-y-6">
+            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1 space-y-6">
               <form id="productForm" onSubmit={handleSaveProduct} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                  {/* Basic Details */}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Product Title</label>
-                      <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="Midnight Manga Oversized Tee" />
+                      <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="Midnight Manga Oversized Tee" />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</label>
-                      <textarea required rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="100% premium cotton tee..." />
+                      <textarea required rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20" placeholder="100% premium cotton tee..." />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Sub-Category</label>
-                        <input type="text" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 text-sm focus:border-indigo-500 focus:outline-hidden" placeholder="Oversized" />
+                        <input type="text" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden" placeholder="Oversized" />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">GST Tax Slab</label>
-                        <select value={taxSlab} onChange={(e) => setTaxSlab(Number(e.target.value))} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 text-sm focus:border-indigo-500 focus:outline-hidden">
+                        <select value={taxSlab} onChange={(e) => setTaxSlab(Number(e.target.value))} className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 text-xs sm:text-sm focus:border-indigo-500 focus:outline-hidden">
                           <option value="5">5% GST (Low cost items)</option>
                           <option value="12">12% GST (Apparel standard)</option>
                           <option value="18">18% GST (Luxury items)</option>
@@ -235,24 +239,24 @@ export default function AdminCatalog() {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Product Images</label>
-                      <div className="mt-1 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                      <div className="mt-1 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-3 sm:p-4">
                         <input
                           type="file"
                           accept="image/*"
                           multiple
                           onChange={handleImageFiles}
-                          className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-full file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-indigo-500"
+                          className="block w-full text-xs sm:text-sm text-slate-600 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-600 file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-indigo-500 cursor-pointer"
                         />
-                        <p className="mt-3 text-xs text-slate-500">Upload one or more product photos from your device.</p>
+                        <p className="mt-2.5 text-[11px] text-slate-500">Upload one or more product photos from your device.</p>
                         {imageUploadError ? <p className="mt-2 text-xs font-semibold text-red-500">{imageUploadError}</p> : null}
-                        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                           {images.map((source, index) => (
-                            <div key={`${source.slice(0, 24)}-${index}`} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                              <img src={source} alt={`Product preview ${index + 1}`} className="h-28 w-full object-cover" />
+                            <div key={`${source.slice(0, 24)}-${index}`} className="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
+                              <img src={source} alt={`Product preview ${index + 1}`} className="h-24 sm:h-28 w-full object-cover" />
                               <button
                                 type="button"
                                 onClick={() => removeImage(index)}
-                                className="absolute right-2 top-2 rounded-full bg-black/80 px-2 py-1 text-[10px] font-semibold text-white"
+                                className="absolute right-1.5 top-1.5 rounded-full bg-black/80 px-2 py-0.5 text-[9px] font-semibold text-white hover:bg-black transition cursor-pointer"
                               >
                                 Remove
                               </button>
@@ -260,7 +264,7 @@ export default function AdminCatalog() {
                           ))}
                         </div>
                         {!images.length && (
-                          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-500">
+                          <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-center text-xs text-slate-400">
                             No image uploaded yet. Add at least one photo to represent the product.
                           </div>
                         )}
@@ -268,9 +272,10 @@ export default function AdminCatalog() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 space-y-4">
-                    <h4 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">Add SKUs to Child Variant Matrix</h4>
-                    <div className="grid grid-cols-2 gap-4">
+                  {/* Matrix Builder */}
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 space-y-4">
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">Add SKUs to Child Variant Matrix</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Size</label>
                         <select value={newVarSize} onChange={(e) => setNewVarSize(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900">
@@ -282,7 +287,7 @@ export default function AdminCatalog() {
                         <input type="text" value={newVarColor} onChange={(e) => setNewVarColor(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="Black, White, Neon" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Stock Count</label>
                         <input type="number" value={newVarStock} onChange={(e) => setNewVarStock(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" />
@@ -292,7 +297,7 @@ export default function AdminCatalog() {
                         <input type="number" value={newVarThreshold} onChange={(e) => setNewVarThreshold(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase">Cost Price</label>
                         <input type="number" value={newVarCost} onChange={(e) => setNewVarCost(e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900" placeholder="500" />
@@ -313,43 +318,61 @@ export default function AdminCatalog() {
                         <div className="flex justify-between"><span>GST Amount Collected ({taxSlab}%):</span><span>₹{calculateTaxSplit(newVarPrice).tax}</span></div>
                       </div>
                     )}
-                    <button type="button" onClick={handleAddVariant} className="w-full py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-200 hover:text-slate-900 transition-colors text-xs font-bold cursor-pointer">Insert SKU into Matrix List</button>
+                    <button type="button" onClick={handleAddVariant} className="w-full py-2.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-200 hover:text-slate-900 transition-colors text-xs font-bold cursor-pointer">Insert SKU into Matrix List</button>
                   </div>
                 </div>
 
+                {/* SKU Variants Table */}
                 <div className="space-y-2">
-                  <h4 className="text-sm font-bold text-slate-900">Active Product SKUs Matrix ({variants.length})</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-900">Active Product SKUs Matrix ({variants.length})</h4>
                   {variants.length > 0 ? (
-                    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead><tr className="border-b border-slate-200 bg-slate-50 text-slate-500"><th className="px-4 py-3">Generated SKU</th><th className="px-4 py-3">Size</th><th className="px-4 py-3">Color</th><th className="px-4 py-3">Stock level</th><th className="px-4 py-3">Cost Price</th><th className="px-4 py-3">MRP</th><th className="px-4 py-3">Selling Price</th><th className="px-4 py-3">Actions</th></tr></thead>
+                    <div className="overflow-x-auto w-full rounded-2xl border border-slate-200 bg-white shadow-2xs">
+                      <table className="min-w-[680px] w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px]">
+                            <th className="px-3.5 py-2.5">Generated SKU</th>
+                            <th className="px-3.5 py-2.5">Size</th>
+                            <th className="px-3.5 py-2.5">Color</th>
+                            <th className="px-3.5 py-2.5">Stock level</th>
+                            <th className="px-3.5 py-2.5">Cost Price</th>
+                            <th className="px-3.5 py-2.5">MRP</th>
+                            <th className="px-3.5 py-2.5">Selling Price</th>
+                            <th className="px-3.5 py-2.5 text-right">Actions</th>
+                          </tr>
+                        </thead>
                         <tbody className="divide-y divide-slate-100 text-slate-700">
                           {variants.map((v, idx) => (
                             <tr key={idx} className="hover:bg-slate-50">
-                              <td className="px-4 py-3 font-mono">{v.sku}</td>
-                              <td className="px-4 py-3"><span className="px-1.5 py-0.5 rounded bg-slate-100 font-bold text-slate-700">{v.size}</span></td>
-                              <td className="px-4 py-3">{v.color}</td>
-                              <td className="px-4 py-3"><input type="number" value={v.stock} onChange={(e) => { const updated = [...variants]; updated[idx].stock = Number(e.target.value); setVariants(updated); }} className="w-16 bg-slate-50 border border-slate-300 rounded px-1 text-center text-slate-900" /></td>
-                              <td className="px-4 py-3">₹{v.costPrice}</td>
-                              <td className="px-4 py-3 text-slate-400 line-through">₹{v.mrp}</td>
-                              <td className="px-4 py-3 font-bold text-emerald-600">₹{v.price}</td>
-                              <td className="px-4 py-3"><button type="button" onClick={() => removeVariant(idx)} className="text-red-500 hover:text-red-600 text-[10px] cursor-pointer font-semibold">Remove SKU</button></td>
+                              <td className="px-3.5 py-2.5 font-mono text-[11px]">{v.sku}</td>
+                              <td className="px-3.5 py-2.5"><span className="px-1.5 py-0.5 rounded bg-slate-100 font-bold text-slate-700 text-[10px]">{v.size}</span></td>
+                              <td className="px-3.5 py-2.5">{v.color}</td>
+                              <td className="px-3.5 py-2.5">
+                                <input type="number" value={v.stock} onChange={(e) => { const updated = [...variants]; updated[idx].stock = Number(e.target.value); setVariants(updated); }} className="w-16 bg-slate-50 border border-slate-300 rounded px-1 text-center text-slate-900 text-xs" />
+                              </td>
+                              <td className="px-3.5 py-2.5">₹{v.costPrice}</td>
+                              <td className="px-3.5 py-2.5 text-slate-400 line-through">₹{v.mrp}</td>
+                              <td className="px-3.5 py-2.5 font-bold text-emerald-600">₹{v.price}</td>
+                              <td className="px-3.5 py-2.5 text-right">
+                                <button type="button" onClick={() => removeVariant(idx)} className="text-red-500 hover:text-red-600 text-[11px] cursor-pointer font-semibold">Remove</button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
                   ) : (
-                    <div className="border border-dashed border-slate-300 rounded-2xl py-8 text-center text-slate-400 text-xs">No child variants mapped yet. Add variants using the matrix form builder on the right.</div>
+                    <div className="border border-dashed border-slate-300 rounded-2xl py-6 text-center text-slate-400 text-xs">
+                      No child variants mapped yet. Add variants using the matrix form builder on the right.
+                    </div>
                   )}
                 </div>
               </form>
             </div>
 
             {/* Modal Footer */}
-            <div className="flex gap-3 justify-end items-center px-8 py-4 border-t border-slate-200 bg-slate-50/80 sticky bottom-0 z-10 backdrop-blur-md">
-              <button type="button" onClick={handleCloseModal} className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer text-sm font-semibold">Discard Changes</button>
-              <button type="submit" form="productForm" className="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-colors cursor-pointer text-sm shadow-md shadow-indigo-500/20">Save Catalog Product</button>
+            <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 justify-end items-stretch sm:items-center px-4 sm:px-8 py-3.5 sm:py-4 border-t border-slate-200 bg-slate-50/90 sticky bottom-0 z-20 backdrop-blur-md">
+              <button type="button" onClick={handleCloseModal} className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer text-xs sm:text-sm font-semibold">Discard Changes</button>
+              <button type="submit" form="productForm" className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition-colors cursor-pointer text-xs sm:text-sm shadow-md shadow-indigo-500/20">Save Catalog Product</button>
             </div>
           </div>
         </div>

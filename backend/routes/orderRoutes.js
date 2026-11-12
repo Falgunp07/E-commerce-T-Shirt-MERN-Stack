@@ -66,29 +66,49 @@ router.post('/checkout', optionalAuth, async (req, res) => {
 
     // Calculate total cost basis & decrement stock inventory
     let totalCostBasis = 0;
+    const preparedCart = [];
+
     for (const item of cart) {
+      let prod = null;
       const prodId = item.productId || item.id;
       if (prodId && mongoose.isValidObjectId(prodId)) {
-        const prod = await Product.findById(prodId);
-        if (prod) {
-          if (Array.isArray(prod.variants) && prod.variants.length > 0) {
-            let matchedVariant = prod.variants.find((v) => v.size === item.size && (!item.color || v.color === item.color));
-            if (!matchedVariant) matchedVariant = prod.variants[0];
-            if (matchedVariant) {
-              totalCostBasis += (matchedVariant.costPrice || Math.round((prod.price || 0) * 0.5)) * (Number(item.qty) || 1);
-              matchedVariant.stock = Math.max(0, (matchedVariant.stock || 0) - (Number(item.qty) || 1));
-              await prod.save();
-            }
-          } else {
-            totalCostBasis += Math.round((prod.price || 0) * 0.5) * (Number(item.qty) || 1);
+        prod = await Product.findById(prodId);
+      }
+      if (!prod && item.title) {
+        prod = await Product.findOne({ title: new RegExp(`^${item.title.trim()}$`, 'i') });
+      }
+
+      const resolvedProductId = prod ? prod._id : (mongoose.isValidObjectId(prodId) ? prodId : null);
+
+      if (prod) {
+        if (Array.isArray(prod.variants) && prod.variants.length > 0) {
+          let matchedVariant = prod.variants.find((v) => v.size === item.size && (!item.color || v.color === item.color));
+          if (!matchedVariant) matchedVariant = prod.variants[0];
+          if (matchedVariant) {
+            totalCostBasis += (matchedVariant.costPrice || Math.round((prod.price || 0) * 0.5)) * (Number(item.qty) || 1);
+            matchedVariant.stock = Math.max(0, (matchedVariant.stock || 0) - (Number(item.qty) || 1));
+            await prod.save();
           }
+        } else {
+          totalCostBasis += Math.round((prod.price || 0) * 0.5) * (Number(item.qty) || 1);
         }
       }
+
+      preparedCart.push({
+        id: String(item.id || item.productId || resolvedProductId || ''),
+        productId: resolvedProductId,
+        title: item.title,
+        price: Number(item.price) || (prod?.price || 0),
+        size: item.size || 'M',
+        color: item.color || (prod?.color || 'Black'),
+        qty: Number(item.qty) || 1,
+        img: item.img || prod?.img || '',
+      });
     }
 
     const order = new Order({
       userId: req.user ? req.user._id : null,
-      cart,
+      cart: preparedCart,
       amount,
       baseAmount,
       taxAmount,

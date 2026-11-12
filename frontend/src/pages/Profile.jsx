@@ -440,9 +440,10 @@ export default function Profile() {
                     </div>
                     <div className="mt-4 space-y-2">
                       {(order.cart || []).map((item, index) => {
-                        const productId = item.id || item._id;
-                        const isCustom = typeof productId === 'string' && productId.startsWith('custom-');
-                        const productLink = isCustom ? '/custom-print' : productId ? `/product/${productId}` : '/shop';
+                        const rawId = item.productId || (item.id && item.id !== item._id ? item.id : null);
+                        const isCustom = typeof rawId === 'string' && rawId.startsWith('custom-');
+                        const targetParam = isCustom ? null : (rawId || item.title);
+                        const productLink = isCustom ? '/custom-print' : targetParam ? `/product/${encodeURIComponent(targetParam)}` : '/shop';
 
                         return (
                           <Link

@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 
 const OrderItemSchema = new mongoose.Schema({
+  id: String,
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
   title: String,
   price: Number,
   size: String,
+  color: String,
   qty: { type: Number, default: 1 },
   img: String,
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
 });
 
 const OrderSchema = new mongoose.Schema({
