@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
 import { FiChevronLeft, FiChevronRight, FiHeart } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
@@ -11,6 +11,7 @@ function formatPrice(v) {
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { cart, addItem, updateItemQty, removeItem } = useCart();
   const { wishlist, toggleItem } = useWishlist();
   const [size, setSize] = useState('M');
@@ -84,6 +85,11 @@ export default function ProductDetail() {
 
   function handleAdd() {
     addItem({ id: product._id, title: product.title, price: product.price, size, color: product.color, img: displayedSrc || product.img });
+  }
+
+  function handleBuyNow() {
+    addItem({ id: product._id, title: product.title, price: product.price, size, color: product.color, img: displayedSrc || product.img, qty: 1 });
+    navigate('/checkout');
   }
 
   function handleInc() {
@@ -171,16 +177,19 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
                 {qty > 0 ? (
-                  <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 px-3 py-1">
-                    <button onClick={handleDec} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-brand-ink">-</button>
+                  <div className="flex w-full items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 bg-slate-50">
+                    <button onClick={handleDec} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-brand-ink hover:bg-slate-300 transition">-</button>
                     <div className="flex-1 text-center text-sm font-semibold text-slate-700">In cart: {qty}</div>
-                    <button onClick={handleInc} className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white">+</button>
+                    <button onClick={handleInc} className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white hover:bg-slate-800 transition">+</button>
                   </div>
                 ) : (
-                  <button onClick={handleAdd} className="w-full rounded-full bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm">Add to cart</button>
+                  <button onClick={handleAdd} className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition cursor-pointer">Add to cart</button>
                 )}
+                <button onClick={handleBuyNow} className="w-full rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:from-emerald-500 hover:to-teal-500 transition cursor-pointer">
+                  Buy Now (COD)
+                </button>
               </div>
 
               <button

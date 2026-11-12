@@ -116,16 +116,20 @@ export function normalizeProduct(product) {
 }
 
 export function calculateCouponDiscount(coupon, total) {
-  if (!coupon) return 0;
+  if (!coupon || !total || total <= 0) return 0;
+  const numTotal = Number(total);
   let discountAmount = 0;
   if (coupon.discountType === 'percentage') {
-    discountAmount = (Number(total) * Number(coupon.discountValue)) / 100;
+    const pct = Math.min(Math.max(Number(coupon.discountValue) || 0, 0), 100);
+    discountAmount = (numTotal * pct) / 100;
   } else {
-    discountAmount = Number(coupon.discountValue);
+    discountAmount = Math.max(0, Number(coupon.discountValue) || 0);
   }
-  if (coupon.maxDiscountLimit) {
+  if (coupon.maxDiscountLimit && Number(coupon.maxDiscountLimit) > 0) {
     discountAmount = Math.min(discountAmount, Number(coupon.maxDiscountLimit));
   }
+  // Commercial safety: Discount cannot exceed cart total
+  discountAmount = Math.min(discountAmount, numTotal);
   return Math.max(0, Math.round(discountAmount));
 }
 

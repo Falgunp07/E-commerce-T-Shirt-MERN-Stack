@@ -43,7 +43,7 @@ router.post('/checkout', optionalAuth, async (req, res) => {
     }
 
     const calculatedTotal = Math.max(0, rawSubtotal - couponDiscount);
-    const amount = total !== undefined ? Number(total) : calculatedTotal;
+    const amount = calculatedTotal;
     const baseAmount = Math.round(amount / 1.12);
     const taxAmount = Math.max(0, amount - baseAmount);
 

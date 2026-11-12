@@ -95,6 +95,28 @@ export default function Profile() {
       .finally(() => setOrdersLoading(false));
   }, [user]);
 
+  async function handleCancelOrder(orderId) {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
+    const token = localStorage.getItem('authToken');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/account/orders/${orderId}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Unable to cancel order');
+      setOrders((prev) =>
+        prev.map((o) => (o._id === orderId ? { ...o, status: 'cancelled' } : o))
+      );
+      alert('Order cancelled successfully.');
+    } catch (err) {
+      alert(err.message || 'Cancellation failed.');
+    }
+  }
+
   const totalSpent = useMemo(() => orders.reduce((sum, order) => sum + Number(order.amount || 0), 0), [orders]);
   const defaultAddress = profileForm.addresses.find((address) => address.isDefault) || profileForm.addresses[0];
   const selectedAddress = profileForm.addresses[selectedAddressIndex] || profileForm.addresses[0];
@@ -427,8 +449,19 @@ export default function Profile() {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 border-t border-slate-200 pt-4 text-sm text-slate-500">
-                      Delivery address: <span className="font-medium text-slate-700">{order.customer?.address || 'Not available'}</span>
+                    <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-slate-200 pt-4 text-sm text-slate-500 gap-3">
+                      <div>
+                        Delivery address: <span className="font-medium text-slate-700">{order.customer?.address || 'Not available'}</span>
+                      </div>
+                      {['pending', 'placed', 'processing', 'unpaid'].includes(order.status) && (
+                        <button
+                          type="button"
+                          onClick={() => handleCancelOrder(order._id)}
+                          className="self-start sm:self-auto px-4 py-1.5 rounded-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 text-xs font-semibold transition cursor-pointer"
+                        >
+                          Cancel Order
+                        </button>
+                      )}
                     </div>
                   </article>
                 ))}

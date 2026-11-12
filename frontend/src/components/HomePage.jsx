@@ -217,7 +217,7 @@ export default function HomePage() {
 							<h3 className="text-lg font-extrabold">Custom Bulk Orders</h3>
 							<p className="mt-1 text-sm text-slate-600">For events, colleges, and teams — get a tailor-made quote.</p>
 						</div>
-						<a href="#bulk" className="rounded-full bg-brand-ink px-5 py-3 text-sm font-semibold text-white">Request Quote</a>
+						<Link to="/custom-print" className="rounded-full bg-brand-ink px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition">Request Quote</Link>
 					</div>
 				</div>
 			</section>
