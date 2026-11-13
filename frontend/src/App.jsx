@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import Checkout from './pages/Checkout';
 import Products from './pages/Products';
@@ -42,35 +43,41 @@ function NotFound() {
 }
 
 function AppShell() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-white via-white to-[#F8F9FA]">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/shop" element={<Products />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/login/*" element={<Login />} />
-        <Route path="/register/*" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/custom-print" element={<CustomPrint />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="catalog" element={<AdminCatalog />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="customers" element={<AdminCustomers />} />
-          <Route path="coupons" element={<AdminCoupons />} />
-          <Route path="cms" element={<AdminCMS />} />
-          <Route path="logs" element={<AdminLogs />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <div className="min-h-screen flex flex-col justify-between bg-linear-to-b from-white via-white to-[#F8F9FA]">
+      {!isAdmin && <Navbar />}
+      <div className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shop" element={<Products />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/login/*" element={<Login />} />
+          <Route path="/register/*" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/custom-print" element={<CustomPrint />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="catalog" element={<AdminCatalog />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="cms" element={<AdminCMS />} />
+            <Route path="logs" element={<AdminLogs />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      {!isAdmin && <Footer />}
     </div>
   );
 }

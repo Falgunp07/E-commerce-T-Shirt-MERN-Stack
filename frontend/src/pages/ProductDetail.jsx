@@ -177,39 +177,72 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
-                {qty > 0 ? (
-                  <div className="flex w-full items-center gap-2">
-                    <div className="flex flex-1 items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 bg-slate-50">
-                      <button onClick={handleDec} className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-brand-ink hover:bg-slate-300 transition cursor-pointer">-</button>
-                      <div className="flex-1 text-center text-xs sm:text-sm font-semibold text-slate-700">In cart: {qty}</div>
-                      <button onClick={handleInc} className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white hover:bg-slate-800 transition cursor-pointer">+</button>
+              {/* Primary action buttons: Add to Cart / Qty Counter & Buy Now */}
+              <div className="mt-6 space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-center">
+                  {qty > 0 ? (
+                    <div className="flex items-center gap-2.5 h-12">
+                      <div className="flex flex-1 items-center justify-between rounded-full border border-slate-300 bg-slate-50 px-3 h-full shadow-xs">
+                        <button
+                          onClick={handleDec}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-slate-200 text-base font-bold text-slate-800 hover:bg-slate-200 transition cursor-pointer"
+                          aria-label="Decrease quantity"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs sm:text-sm font-bold text-slate-800">
+                          In cart: {qty}
+                        </span>
+                        <button
+                          onClick={handleInc}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-base font-bold text-white hover:bg-slate-800 transition cursor-pointer"
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/cart')}
+                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-black shadow-xs transition hover:border-black hover:bg-slate-50 cursor-pointer"
+                        title="View Cart"
+                        aria-label="View Cart"
+                      >
+                        <FiShoppingBag className="text-lg text-black" />
+                      </button>
                     </div>
+                  ) : (
                     <button
-                      type="button"
-                      onClick={() => navigate('/cart')}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-black shadow-xs transition hover:border-black hover:bg-slate-50 cursor-pointer"
-                      title="View Cart"
-                      aria-label="View Cart"
+                      onClick={handleAdd}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-black px-6 text-sm font-bold text-white shadow-sm hover:bg-slate-800 active:scale-[0.98] transition cursor-pointer"
                     >
-                      <FiShoppingBag className="text-base text-black" />
+                      <FiShoppingBag className="text-base" />
+                      Add to cart
                     </button>
-                  </div>
-                ) : (
-                  <button onClick={handleAdd} className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition cursor-pointer">Add to cart</button>
-                )}
-                <button onClick={handleBuyNow} className="w-full rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:from-emerald-500 hover:to-teal-500 transition cursor-pointer">
-                  Buy Now (COD)
+                  )}
+
+                  <button
+                    onClick={handleBuyNow}
+                    className="flex h-12 w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-6 text-sm font-bold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition cursor-pointer"
+                  >
+                    <span>Buy Now (COD)</span>
+                    <span className="text-base font-normal">&rarr;</span>
+                  </button>
+                </div>
+
+                {/* Secondary action button: Wishlist */}
+                <button
+                  onClick={() => toggleItem({ id: product._id, title: product.title, price: product.price, img: product.img })}
+                  className={`flex h-11 w-full items-center justify-center gap-2 rounded-full border text-sm font-semibold transition-all duration-200 shadow-xs cursor-pointer ${
+                    wishlisted
+                      ? 'border-red-500 bg-red-50 text-red-600 hover:bg-red-100'
+                      : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
+                  }`}
+                >
+                  <FiHeart className={`text-base ${wishlisted ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
+                  <span>{wishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}</span>
                 </button>
               </div>
-
-              <button
-                onClick={() => toggleItem({ id: product._id, title: product.title, price: product.price, img: product.img })}
-                className={`inline-flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition ${wishlisted ? 'border-red-500 bg-red-500 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-brand-pink hover:text-brand-pink'}`}
-              >
-                <FiHeart className="mr-2" />
-                {wishlisted ? 'Wishlisted' : 'Wishlist this product'}
-              </button>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
