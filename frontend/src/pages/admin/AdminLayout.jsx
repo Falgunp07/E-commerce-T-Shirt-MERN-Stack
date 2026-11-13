@@ -15,7 +15,6 @@ export default function AdminLayout() {
     if (!token) {
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminUser');
-    localStorage.removeItem('authToken');
       navigate('/admin/login');
       return;
     }
@@ -42,7 +41,6 @@ export default function AdminLayout() {
     if (!['admin', 'catalog_manager', 'logistics_manager'].includes(parsedUser.role)) {
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminUser');
-    localStorage.removeItem('authToken');
       navigate('/admin/login');
       return;
     }
@@ -52,7 +50,6 @@ export default function AdminLayout() {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
-    localStorage.removeItem('authToken');
     navigate('/admin/login');
   };
 

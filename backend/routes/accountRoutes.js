@@ -8,7 +8,14 @@ const router = express.Router();
 
 router.get('/orders', requireAuth, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 }).lean();
+    const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
+    const query = {
+      $or: [
+        { userId: req.user._id },
+        ...(userEmail ? [{ 'customer.email': userEmail }] : []),
+      ],
+    };
+    const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
     return res.json({ success: true, orders });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
@@ -17,7 +24,14 @@ router.get('/orders', requireAuth, async (req, res) => {
 
 router.put('/orders/:id/cancel', requireAuth, async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.id, userId: req.user._id });
+    const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
+    const order = await Order.findOne({
+      _id: req.params.id,
+      $or: [
+        { userId: req.user._id },
+        ...(userEmail ? [{ 'customer.email': userEmail }] : []),
+      ],
+    });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }

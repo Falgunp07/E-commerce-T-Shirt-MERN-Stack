@@ -54,7 +54,12 @@ export default function Profile() {
   }, [user, navigate]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setProfileForm({ name: '', phone: '', addresses: [emptyAddress()] });
+      setProfileErrors({ name: '', phone: '', addresses: [{}] });
+      setSelectedAddressIndex(0);
+      return;
+    }
     const addresses = user.addresses?.length ? user.addresses.map((address) => ({ ...address })) : [emptyAddress()];
     setProfileForm({
       name: user.name || '',
@@ -77,8 +82,13 @@ export default function Profile() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setOrders([]);
+      setOrdersLoading(false);
+      return;
+    }
     const token = localStorage.getItem('authToken');
+    setOrders([]);
     setOrdersLoading(true);
     setOrdersError('');
     fetch(`${API_BASE_URL}/api/account/orders`, {

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import Coupon from '../models/Coupon.js';
-import { optionalAuth } from '../middleware/auth.js';
+import { optionalAuth, requireAuth } from '../middleware/auth.js';
 import { formatAddress, calculateCouponDiscount, writeAuditLog } from '../utils/helpers.js';
 import { isValidName, isValidPhone, isValidAddressText } from '../utils/validators.js';
 
@@ -142,9 +142,21 @@ router.post('/checkout', optionalAuth, async (req, res) => {
   }
 });
 
-router.get('/orders', async (req, res) => {
+router.get('/orders', requireAuth, async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
+    // Admins and logistics managers can view all orders
+    if (['admin', 'catalog_manager', 'logistics_manager'].includes(req.user.role)) {
+      const orders = await Order.find().sort({ createdAt: -1 }).lean();
+      return res.json({ success: true, orders });
+    }
+    // Regular customers can strictly only view their own isolated orders
+    const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
+    const orders = await Order.find({
+      $or: [
+        { userId: req.user._id },
+        ...(userEmail ? [{ 'customer.email': userEmail }] : []),
+      ],
+    }).sort({ createdAt: -1 }).lean();
     return res.json({ success: true, orders });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

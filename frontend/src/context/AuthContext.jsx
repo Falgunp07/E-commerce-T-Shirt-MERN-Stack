@@ -83,6 +83,10 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('savedAddresses');
+    localStorage.removeItem('guest_checkout_addresses');
+    localStorage.removeItem('cart');
+    localStorage.removeItem('wishlist');
     setUser(null);
     if (typeof window !== 'undefined' && window.Clerk && typeof window.Clerk.signOut === 'function') {
       window.Clerk.signOut().catch(() => {});

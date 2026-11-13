@@ -21,52 +21,76 @@ export default function Checkout() {
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponMessage, setCouponMessage] = useState({ text: '', type: '' });
 
-  // Address modal and saved addresses state
-  const [savedAddresses, setSavedAddresses] = useState(() => {
-    try {
-      const raw = localStorage.getItem('savedAddresses');
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-  const [selectedAddressId, setSelectedAddressId] = useState(() => {
-    try {
-      const raw = localStorage.getItem('savedAddresses');
-      const list = raw ? JSON.parse(raw) : [];
-      return list[0]?.id || '';
-    } catch (e) {
-      return '';
-    }
-  });
+  // User-isolated address storage key to prevent any cross-user data leakage
+  const getAddressStorageKey = (currentUser) => {
+    if (currentUser?._id) return `user_addresses_${currentUser._id}`;
+    if (currentUser?.email) return `user_addresses_${currentUser.email.toLowerCase().trim()}`;
+    return 'guest_checkout_addresses';
+  };
 
+  // Address modal and saved addresses state
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState('');
   const [modalAddress, setModalAddress] = useState({ name: '', phone: '', address: '', postcode: '' });
 
+  // Strictly sync and isolate addresses per authenticated user session
   useEffect(() => {
-    if (user && savedAddresses.length === 0) {
-      const defAddr = user.addresses?.find((a) => a.isDefault) || user.addresses?.[0];
-      if (defAddr || user.name) {
-        const initialAddr = {
-          id: `addr_profile_${Date.now()}`,
-          name: user.name || '',
-          phone: user.phone || defAddr?.phone || '',
-          address: defAddr ? `${defAddr.line1}${defAddr.city ? ', ' + defAddr.city : ''}${defAddr.state ? ', ' + defAddr.state : ''}` : '',
-          postcode: defAddr?.postalCode || '',
-        };
-        if (initialAddr.address && initialAddr.phone) {
-          setSavedAddresses([initialAddr]);
-          setSelectedAddressId(initialAddr.id);
-          try {
-            localStorage.setItem('savedAddresses', JSON.stringify([initialAddr]));
-          } catch (e) {}
+    // Purge legacy global key if it exists to prevent cross-contamination
+    try {
+      localStorage.removeItem('savedAddresses');
+    } catch (e) {}
+
+    const storageKey = getAddressStorageKey(user);
+    let loaded = [];
+
+    // 1. If user has addresses saved in MongoDB profile, load them
+    if (user && Array.isArray(user.addresses) && user.addresses.length > 0) {
+      loaded = user.addresses.map((a, idx) => ({
+        id: a._id ? String(a._id) : `addr_db_${idx}`,
+        name: a.fullName || user.name || '',
+        phone: a.phone || user.phone || '',
+        address: [a.line1, a.line2, a.city, a.state].filter(Boolean).join(', '),
+        postcode: a.postalCode || '',
+        isDefault: Boolean(a.isDefault),
+      }));
+    }
+
+    // 2. Also check scoped local storage for this specific user or guest
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const localList = JSON.parse(raw);
+        if (Array.isArray(localList)) {
+          localList.forEach((la) => {
+            if (!loaded.some((item) => item.address === la.address && item.postcode === la.postcode && item.name === la.name)) {
+              loaded.push(la);
+            }
+          });
         }
       }
-    } else if (savedAddresses.length > 0 && !selectedAddressId) {
-      setSelectedAddressId(savedAddresses[0].id);
+    } catch (e) {}
+
+    // 3. Fallback: if user is logged in but has no saved addresses yet, prefill template if user has name/phone
+    if (loaded.length === 0 && user && (user.name || user.phone)) {
+      const defaultAddr = user.addresses?.[0];
+      const initialAddr = {
+        id: `addr_profile_${Date.now()}`,
+        name: user.name || '',
+        phone: user.phone || defaultAddr?.phone || '',
+        address: defaultAddr ? [defaultAddr.line1, defaultAddr.city, defaultAddr.state].filter(Boolean).join(', ') : '',
+        postcode: defaultAddr?.postalCode || '',
+      };
+      if (initialAddr.address && initialAddr.phone) {
+        loaded.push(initialAddr);
+      }
     }
-  }, [user, savedAddresses.length, selectedAddressId]);
+
+    setSavedAddresses(loaded);
+    const def = loaded.find((a) => a.isDefault) || loaded[0];
+    setSelectedAddressId(def ? def.id : '');
+  }, [user]);
 
   useEffect(() => {
     const fetchCoupons = async () => {
@@ -178,7 +202,7 @@ export default function Checkout() {
         ? prev.map((item) => (item.id === cleanAddress.id ? cleanAddress : item))
         : [cleanAddress, ...prev];
       try {
-        localStorage.setItem('savedAddresses', JSON.stringify(next));
+        localStorage.setItem(getAddressStorageKey(user), JSON.stringify(next));
       } catch (err) {}
       return next;
     });
@@ -194,7 +218,7 @@ export default function Checkout() {
     setSavedAddresses((prev) => {
       const next = prev.filter((item) => item.id !== id);
       try {
-        localStorage.setItem('savedAddresses', JSON.stringify(next));
+        localStorage.setItem(getAddressStorageKey(user), JSON.stringify(next));
       } catch (err) {}
       if (selectedAddressId === id) {
         setSelectedAddressId(next[0]?.id || '');
