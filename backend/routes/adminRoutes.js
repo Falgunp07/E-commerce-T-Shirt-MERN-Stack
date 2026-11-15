@@ -207,10 +207,10 @@ router.put('/orders/:id/status', requireAuth, requireRole(['admin', 'logistics_m
     order.status = status || order.status;
     if (status === 'manifested') {
       order.awbCode = order.awbCode || `AWB${String(order._id).slice(-8).toUpperCase()}`;
-      order.shippingLabelUrl = order.shippingLabelUrl || `https://threadlab.local/labels/${order._id}.pdf`;
+      order.shippingLabelUrl = order.shippingLabelUrl || `https://rudrakshenterprise.local/labels/${order._id}.pdf`;
     }
     if (status === 'shipped') {
-      order.trackingUrl = order.trackingUrl || `https://threadlab.local/track/${order._id}`;
+      order.trackingUrl = order.trackingUrl || `https://rudrakshenterprise.local/track/${order._id}`;
     }
     await order.save();
     await writeAuditLog(req, 'Updated order status', { orderId: order._id, status: order.status });

@@ -18,7 +18,7 @@ export default function ClerkSync() {
 
       if (email && (!localUser || localUser.email !== email || localUser.avatar !== avatar)) {
         syncClerkUser({ clerkId, email, name, avatar }).catch((err) => {
-          console.error('[ThreadLab] Clerk sync error:', err);
+          console.error('[Rudraksh Enterprise] Clerk sync error:', err);
         });
       }
     }

@@ -103,7 +103,7 @@ export default function Login() {
             </Link>
           </div>
           <p className="mt-5 text-center text-sm text-slate-600">
-            New to ThreadLab? <Link to="/register" className="font-semibold text-brand-ink">Create an account</Link>
+            New to Rudraksh Enterprise? <Link to="/register" className="font-semibold text-brand-ink">Create an account</Link>
           </p>
         </form>
       )}

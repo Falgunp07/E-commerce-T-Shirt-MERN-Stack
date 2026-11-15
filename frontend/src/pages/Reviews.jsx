@@ -35,7 +35,7 @@ const INITIAL_REVIEWS = [
 export default function Reviews() {
   const [reviewsList, setReviewsList] = useState(() => {
     try {
-      const saved = localStorage.getItem('threadlab_reviews');
+      const saved = localStorage.getItem('rudraksh_reviews');
       return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
     } catch {
       return INITIAL_REVIEWS;
@@ -63,7 +63,7 @@ export default function Reviews() {
     const updated = [newRev, ...reviewsList];
     setReviewsList(updated);
     try {
-      localStorage.setItem('threadlab_reviews', JSON.stringify(updated));
+      localStorage.setItem('rudraksh_reviews', JSON.stringify(updated));
     } catch {}
 
     setName('');

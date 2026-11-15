@@ -274,14 +274,14 @@ async function seed() {
   const usersToSeed = [
     {
       name: 'Root Admin',
-      email: 'admin@threadlab.com',
+      email: 'admin@rudrakshenterprise.com',
       password: passwordHash,
       role: 'admin',
       phone: '9876543210',
       addresses: [
         {
           label: 'HQ',
-          fullName: 'ThreadLab HQ Admin',
+          fullName: 'Rudraksh Enterprise Admin',
           phone: '9876543210',
           line1: '402 Innovation Park, MG Road',
           city: 'Bangalore',
@@ -294,7 +294,7 @@ async function seed() {
     },
     {
       name: 'Logistics Head',
-      email: 'logistics@threadlab.com',
+      email: 'logistics@rudrakshenterprise.com',
       password: passwordHash,
       role: 'logistics_manager',
       phone: '9876543211',
@@ -302,7 +302,7 @@ async function seed() {
     },
     {
       name: 'Catalog Manager',
-      email: 'catalog@threadlab.com',
+      email: 'catalog@rudrakshenterprise.com',
       password: passwordHash,
       role: 'catalog_manager',
       phone: '9876543212',
@@ -471,7 +471,7 @@ async function seed() {
       paymentMethod: 'COD',
       status: 'delivered',
       awbCode: 'AWB98471201',
-      shippingLabelUrl: 'https://threadlab.local/labels/sample-1.pdf',
+      shippingLabelUrl: 'https://rudrakshenterprise.local/labels/sample-1.pdf',
       rma: { status: 'none', reason: '', qcStatus: 'pending', refundTxnId: '' },
       createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
     },
@@ -503,7 +503,7 @@ async function seed() {
       paymentMethod: 'COD',
       status: 'shipped',
       awbCode: 'AWB98471202',
-      shippingLabelUrl: 'https://threadlab.local/labels/sample-2.pdf',
+      shippingLabelUrl: 'https://rudrakshenterprise.local/labels/sample-2.pdf',
       rma: { status: 'none', reason: '', qcStatus: 'pending', refundTxnId: '' },
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     },
@@ -535,7 +535,7 @@ async function seed() {
       paymentMethod: 'COD',
       status: 'manifested',
       awbCode: 'AWB98471203',
-      shippingLabelUrl: 'https://threadlab.local/labels/sample-3.pdf',
+      shippingLabelUrl: 'https://rudrakshenterprise.local/labels/sample-3.pdf',
       rma: { status: 'none', reason: '', qcStatus: 'pending', refundTxnId: '' },
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     },
@@ -599,7 +599,7 @@ async function seed() {
       paymentMethod: 'COD',
       status: 'delivered',
       awbCode: 'AWB98471205',
-      shippingLabelUrl: 'https://threadlab.local/labels/sample-5.pdf',
+      shippingLabelUrl: 'https://rudrakshenterprise.local/labels/sample-5.pdf',
       rma: {
         status: 'return_requested',
         reason: 'Size is slightly looser than expected, requesting exchange or return.',

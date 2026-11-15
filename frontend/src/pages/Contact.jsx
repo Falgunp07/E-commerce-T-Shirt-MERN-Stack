@@ -34,7 +34,7 @@ export default function Contact() {
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[
               ['Direct Helpline', '+91 98765 43210'],
-              ['Official Support', 'hello@threadlab.in'],
+              ['Official Support', 'hello@rudrakshenterprise.com'],
               ['Payment Mode', 'COD available across India'],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

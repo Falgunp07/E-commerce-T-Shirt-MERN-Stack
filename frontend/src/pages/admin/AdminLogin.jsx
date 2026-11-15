@@ -52,8 +52,9 @@ export default function AdminLogin() {
           <span className="inline-flex items-center rounded-full bg-indigo-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-indigo-700 border border-indigo-200">
             Control Panel
           </span>
-          <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900">
-            ThreadLab <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Admin</span>
+          <img src="/logo.png" alt="Logo" className="h-20 w-20 mx-auto mb-3 object-contain" />
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">
+            Rudraksh Enterprise <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Admin</span>
           </h2>
           <p className="mt-2 text-sm text-slate-500">
             Sign in to manage catalog, logistics, and revenues
@@ -82,7 +83,7 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="mt-1 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
-                  placeholder="admin@threadlab.com"
+                  placeholder="admin@rudrakshenterprise.com"
                 />
               </div>
 

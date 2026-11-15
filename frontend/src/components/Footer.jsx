@@ -75,16 +75,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 font-extrabold text-white text-base shadow-md shadow-indigo-500/30">
-                TL
-              </div>
-              <span className="text-xl font-black tracking-tight text-white">
-                Thread<span className="text-indigo-400">Lab</span>
-              </span>
-            </div>
+            <Link to="/" className="inline-block" aria-label="Rudraksh Enterprise Home">
+              <img
+                src="/logo-white.png"
+                alt="Logo"
+                className="h-16 w-16 object-contain hover:opacity-90 transition"
+              />
+            </Link>
             <p className="max-w-sm text-xs leading-relaxed text-slate-400">
-              ThreadLab is an independent custom streetwear studio crafting museum-grade direct-to-garment tees, oversized silhouettes, and on-demand custom creator prints across India.
+              Rudraksh Enterprise is an independent custom streetwear studio crafting museum-grade direct-to-garment tees, oversized silhouettes, and on-demand custom creator prints across India.
             </p>
             <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 font-medium">
@@ -179,7 +178,7 @@ export default function Footer() {
       {/* Bottom Legal / Copyright Bar */}
       <div className="border-t border-slate-800 bg-slate-950 py-6 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} ThreadLab Custom Wear. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Rudraksh Enterprise. All rights reserved.</p>
           <div className="flex items-center gap-4 text-[11px]">
             <span className="flex items-center gap-1 text-slate-400">
               <FiShield className="text-emerald-400" /> 256-bit SSL Secured

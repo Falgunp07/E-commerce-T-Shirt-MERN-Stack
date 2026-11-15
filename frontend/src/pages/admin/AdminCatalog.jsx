@@ -149,7 +149,7 @@ export default function AdminCatalog() {
     const stock = Number(newVarStock) >= 0 ? Number(newVarStock) : 10;
     const threshold = Number(newVarThreshold) >= 0 ? Number(newVarThreshold) : 5;
 
-    const skuCode = `TL-${(title || 'PROD').substring(0, 4).toUpperCase().replace(/\s+/g, '')}-${color.substring(0, 3).toUpperCase()}-${newVarSize}`;
+    const skuCode = `RE-${(title || 'PROD').substring(0, 4).toUpperCase().replace(/\s+/g, '')}-${color.substring(0, 3).toUpperCase()}-${newVarSize}`;
     const newVariant = {
       sku: skuCode,
       size: newVarSize,

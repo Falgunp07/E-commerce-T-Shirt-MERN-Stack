@@ -50,22 +50,12 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/60 bg-white backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-3">
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-black text-white shadow-glow"
-            style={{
-              backgroundImage: 'linear-gradient(135deg, #FF4D6D 0%, #6C63FF 55%, #FFD166 100%)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'padding-box',
-              color: '#ffffff',
-            }}
-          >
-            TL
-          </div>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">ThreadLab</p>
-            <p className="text-lg font-black text-brand-ink">Custom Wear</p>
-          </div>
+        <Link to="/" className="flex items-center" aria-label="Rudraksh Enterprise Home">
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-12 w-12 sm:h-14 sm:w-14 object-contain transition-transform duration-200 hover:scale-105"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">

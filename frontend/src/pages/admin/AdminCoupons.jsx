@@ -214,7 +214,7 @@ export default function AdminCoupons() {
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
                   className="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 text-sm focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 uppercase font-mono"
-                  placeholder="THREADLAB20"
+                  placeholder="RE20"
                 />
               </div>
               <div>

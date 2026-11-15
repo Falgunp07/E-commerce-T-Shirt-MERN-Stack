@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
 app.get(['/', '/api', '/health', '/api/health'], (req, res) => {
   res.json({
     success: true,
-    message: 'ThreadLab backend is running',
+    message: 'Rudraksh Enterprise backend is running',
     timestamp: new Date(),
     endpoints: {
       health: '/api/health',

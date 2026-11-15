@@ -150,12 +150,10 @@ export default function AdminLayout() {
       >
         {/* Brand Header */}
         <div className="h-16 flex items-center px-6 border-b border-slate-200 gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-white shadow-md shadow-indigo-500/20">
-            TL
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain shrink-0" />
           {sidebarOpen && (
-            <span className="font-extrabold text-lg tracking-tight text-slate-900">
-              ThreadLab <span className="text-indigo-600 text-xs font-semibold uppercase">Admin</span>
+            <span className="font-extrabold text-sm tracking-tight text-slate-900">
+              Rudraksh Enterprise <span className="text-indigo-600 text-xs font-semibold uppercase">Admin</span>
             </span>
           )}
         </div>

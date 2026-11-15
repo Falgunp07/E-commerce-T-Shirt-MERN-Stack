@@ -249,7 +249,7 @@ export default function AdminOrders() {
               </div>
               <div className="grid grid-cols-2 gap-4 border-b-2 border-slate-950 pb-4 text-[10px]">
                 <div><h5 className="font-black uppercase text-[9px] text-slate-500">Deliver To:</h5><p className="font-bold mt-1 text-xs">{selectedLabelOrder.customer?.name}</p><p className="text-slate-700 leading-tight mt-1">{selectedLabelOrder.customer?.address}</p><p className="text-slate-700 mt-1 font-bold">Phone: {selectedLabelOrder.customer?.phone}</p></div>
-                <div className="border-l-2 border-slate-950 pl-4"><h5 className="font-black uppercase text-[9px] text-slate-500">Shipped By:</h5><p className="font-bold mt-1 text-xs">THREADLAB LTD.</p><p className="text-slate-700 leading-tight mt-1">Warehouse Sector 4, Bangalore, India</p><p className="text-slate-700 mt-1 font-bold">GSTIN: 29AABCX1209B1ZN</p></div>
+                <div className="border-l-2 border-slate-950 pl-4"><h5 className="font-black uppercase text-[9px] text-slate-500">Shipped By:</h5><p className="font-bold mt-1 text-xs">RUDRAKSH ENTERPRISE LTD.</p><p className="text-slate-700 leading-tight mt-1">Warehouse Sector 4, Bangalore, India</p><p className="text-slate-700 mt-1 font-bold">GSTIN: 29AABCX1209B1ZN</p></div>
               </div>
               <div className="flex justify-between items-center text-[10px] pt-2">
                 <div><p className="text-slate-500 font-bold uppercase">Weight</p><p className="font-bold text-xs mt-0.5">0.32 Kg (1 Apparel)</p></div>
