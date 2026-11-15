@@ -615,7 +615,7 @@ export default function Checkout() {
                   required
                   value={modalAddress.phone}
                   onChange={(e) => handleModalFieldChange('phone', e.target.value)}
-                  placeholder="e.g. 9876543210"
+                  placeholder="e.g. 8141275813"
                   className={`w-full rounded-xl border px-3.5 py-2.5 text-xs text-slate-800 outline-none transition ${fieldErrors.phone ? 'border-red-500 focus:border-red-500 bg-red-50/20' : 'border-slate-300 focus:border-brand-ink'}`}
                 />
                 {fieldErrors.phone && <p className="mt-1 text-[11px] font-semibold text-red-500">{fieldErrors.phone}</p>}

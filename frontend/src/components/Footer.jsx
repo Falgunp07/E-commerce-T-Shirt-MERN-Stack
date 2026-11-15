@@ -85,11 +85,19 @@ export default function Footer() {
             <p className="max-w-sm text-xs leading-relaxed text-slate-400">
               Rudraksh Enterprise is an independent custom streetwear studio crafting museum-grade direct-to-garment tees, oversized silhouettes, and on-demand custom creator prints across India.
             </p>
-            <div className="pt-2 flex items-center gap-3 text-xs text-slate-400">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 font-medium">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                COD & Delivery Active Pan-India
-              </span>
+            <div className="pt-2 space-y-1.5 text-xs text-slate-400">
+              <a href="tel:+918141275813" className="flex items-center gap-2 hover:text-white transition">
+                <span>📞 +91 81412 75813</span>
+              </a>
+              <a href="mailto:rudrakshenterprise726@gmail.com" className="flex items-center gap-2 hover:text-white transition truncate">
+                <span>✉️ rudrakshenterprise726@gmail.com</span>
+              </a>
+              <div className="pt-1">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 font-medium text-[11px]">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  COD &amp; Delivery Active Pan-India
+                </span>
+              </div>
             </div>
           </div>
 

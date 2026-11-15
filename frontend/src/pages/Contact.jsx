@@ -33,13 +33,19 @@ export default function Contact() {
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[
-              ['Direct Helpline', '+91 98765 43210'],
-              ['Official Support', 'hello@rudrakshenterprise.com'],
-              ['Payment Mode', 'COD available across India'],
-            ].map(([label, value]) => (
+              ['Direct Helpline', '+91 81412 75813', 'tel:+918141275813'],
+              ['Official Support', 'rudrakshenterprise726@gmail.com', 'mailto:rudrakshenterprise726@gmail.com'],
+              ['Payment Mode', 'COD available across India', null],
+            ].map(([label, value, href]) => (
               <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{label}</div>
-                <div className="mt-2 text-lg font-bold text-brand-ink">{value}</div>
+                {href ? (
+                  <a href={href} className="mt-2 block text-base sm:text-lg font-bold text-brand-ink hover:text-indigo-600 transition truncate">
+                    {value}
+                  </a>
+                ) : (
+                  <div className="mt-2 text-base sm:text-lg font-bold text-brand-ink">{value}</div>
+                )}
               </div>
             ))}
           </div>
@@ -109,7 +115,7 @@ export default function Contact() {
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       className="mt-1 block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-brand-ink focus:bg-white"
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 81412 75813"
                     />
                   </div>
                   <div>

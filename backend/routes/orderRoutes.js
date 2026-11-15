@@ -49,8 +49,8 @@ router.post('/checkout', optionalAuth, async (req, res) => {
 
     const customerSnapshot = {
       name: String(customer.name || req.user?.name || '').trim(),
-      email: String(customer.email || req.user?.email || 'guest@rudrakshenterprise.com').trim().toLowerCase(),
-      phone: String(customer.phone || req.user?.phone || defaultAddress?.phone || '9999999999').trim(),
+      email: String(customer.email || req.user?.email || 'rudrakshenterprise726@gmail.com').trim().toLowerCase(),
+      phone: String(customer.phone || req.user?.phone || defaultAddress?.phone || '8141275813').trim(),
       address: String(customer.address || formatAddress(defaultAddress) || '').trim(),
     };
 
