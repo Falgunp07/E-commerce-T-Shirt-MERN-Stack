@@ -146,9 +146,19 @@ export default function AdminOrders() {
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ordered Products</h4>
                   <div className="space-y-2">
                     {order.cart?.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center text-xs">
-                        <div><p className="font-semibold text-slate-800">{item.title}</p><p className="text-[10px] text-slate-500">Size: {item.size} | Color: {item.color || 'Standard'}</p></div>
-                        <span className="text-slate-600 font-mono">₹{item.price} x{item.qty}</span>
+                      <div key={index} className="flex justify-between items-start text-xs border-b border-slate-100 pb-1.5 last:border-b-0">
+                        <div>
+                          <p className="font-semibold text-slate-800">{item.title}</p>
+                          <p className="text-[10px] text-slate-500">Size: {item.size} | Color: {item.color || 'Standard'}</p>
+                          {item.customDetails && (
+                            <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono text-[10px] border border-purple-200">
+                              <span>Custom: "{item.customDetails.text}"</span>
+                              <span>•</span>
+                              <span>Pos: {item.customDetails.position}</span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-slate-600 font-mono font-medium">₹{item.price} x{item.qty}</span>
                       </div>
                     ))}
                   </div>

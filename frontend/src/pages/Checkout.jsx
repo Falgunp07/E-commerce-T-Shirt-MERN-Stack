@@ -530,7 +530,7 @@ export default function Checkout() {
                     {couponMessage.text}
                   </p>
                 )}
-                <p className="mt-2 text-[11px] text-slate-500">Try <span className="font-semibold text-brand-ink">OFFER50</span> for 50% discount.</p>
+                <p className="mt-2 text-[11px] text-slate-500">Active offers: Use <span className="font-bold text-slate-900">WELCOME10</span> (10% OFF) or <span className="font-bold text-slate-900">FLAT200</span> (₹200 OFF).</p>
               </div>
 
               <div className="space-y-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">

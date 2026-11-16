@@ -108,8 +108,8 @@ export default function Cart() {
               </div>
 
               <div className="space-y-3">
-                <Link to={user ? '/checkout' : '/login'} className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10">
-                  {user ? 'Proceed to checkout' : 'Sign in to checkout'}
+                <Link to="/checkout" className="inline-flex w-full items-center justify-center rounded-full bg-black px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10 hover:bg-slate-800 transition">
+                  Proceed to checkout
                 </Link>
                 <button onClick={() => clear()} className="inline-flex w-full items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-4 text-sm font-semibold text-slate-700 hover:border-brand-ink hover:text-brand-ink">
                   Clear cart
