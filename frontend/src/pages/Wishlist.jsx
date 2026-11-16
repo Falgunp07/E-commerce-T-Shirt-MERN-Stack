@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
+import { FiShoppingBag, FiTrash2 } from 'react-icons/fi';
 
 function formatPrice(v) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
@@ -7,6 +9,21 @@ function formatPrice(v) {
 
 export default function Wishlist() {
   const { wishlist, removeItem, clear } = useWishlist();
+  const { addItem } = useCart();
+  const navigate = useNavigate();
+
+  const handleMoveToCart = (item) => {
+    addItem({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      size: item.size || 'M',
+      color: item.color || 'Black',
+      img: item.img,
+      qty: 1,
+    });
+    removeItem(item.id);
+  };
 
   return (
     <main className="bg-brand-gradient">
@@ -42,13 +59,31 @@ export default function Wishlist() {
                   <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Wishlist item</div>
                   <h3 className="mt-2 text-xl font-extrabold text-brand-ink">{item.title}</h3>
                   <div className="mt-3 text-lg font-black text-brand-ink">{formatPrice(item.price)}</div>
-                  <div className="mt-5 flex gap-3">
-                    <Link to={`/product/${item.id}`} className="flex-1 rounded-full bg-black px-4 py-3 text-center text-sm font-semibold text-white">
-                      View details
-                    </Link>
-                    <button onClick={() => removeItem(item.id)} className="rounded-full border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700">
-                      Remove
+                  <div className="mt-5 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleMoveToCart(item)}
+                      className="w-full flex items-center justify-center gap-2 rounded-full bg-black px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition cursor-pointer shadow-sm"
+                    >
+                      <FiShoppingBag className="text-sm" />
+                      Move to Cart
                     </button>
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/product/${item.id}`}
+                        className="flex-1 rounded-full border border-slate-300 bg-white py-2 text-center text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                      >
+                        View Details
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                        title="Remove from wishlist"
+                      >
+                        <FiTrash2 className="text-sm" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </article>
