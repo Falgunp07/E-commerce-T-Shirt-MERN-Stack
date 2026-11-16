@@ -9,6 +9,12 @@ const OrderItemSchema = new mongoose.Schema({
   color: String,
   qty: { type: Number, default: 1 },
   img: String,
+  customDetails: {
+    text: String,
+    position: String,
+    artworkUrl: String,
+    fontStyle: String,
+  },
 });
 
 const OrderSchema = new mongoose.Schema({

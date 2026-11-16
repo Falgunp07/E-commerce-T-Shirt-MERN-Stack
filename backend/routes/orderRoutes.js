@@ -49,8 +49,8 @@ router.post('/checkout', optionalAuth, async (req, res) => {
 
     const customerSnapshot = {
       name: String(customer.name || req.user?.name || '').trim(),
-      email: String(customer.email || req.user?.email || 'rudrakshenterprise726@gmail.com').trim().toLowerCase(),
-      phone: String(customer.phone || req.user?.phone || defaultAddress?.phone || '8141275813').trim(),
+      email: String(customer.email || req.user?.email || 'guest@rudrakshenterprise.com').trim().toLowerCase(),
+      phone: String(customer.phone || req.user?.phone || defaultAddress?.phone || '').trim(),
       address: String(customer.address || formatAddress(defaultAddress) || '').trim(),
     };
 
@@ -85,8 +85,15 @@ router.post('/checkout', optionalAuth, async (req, res) => {
           let matchedVariant = prod.variants.find((v) => v.size === item.size && (!item.color || v.color === item.color));
           if (!matchedVariant) matchedVariant = prod.variants[0];
           if (matchedVariant) {
-            totalCostBasis += (matchedVariant.costPrice || Math.round((prod.price || 0) * 0.5)) * (Number(item.qty) || 1);
-            matchedVariant.stock = Math.max(0, (matchedVariant.stock || 0) - (Number(item.qty) || 1));
+            const requestedQty = Number(item.qty) || 1;
+            if ((matchedVariant.stock || 0) < requestedQty) {
+              return res.status(400).json({
+                success: false,
+                message: `Sorry, "${item.title}" (${item.size || 'Standard'}) only has ${matchedVariant.stock || 0} left in stock.`,
+              });
+            }
+            totalCostBasis += (matchedVariant.costPrice || Math.round((prod.price || 0) * 0.5)) * requestedQty;
+            matchedVariant.stock = Math.max(0, (matchedVariant.stock || 0) - requestedQty);
             await prod.save();
           }
         } else {
@@ -103,6 +110,7 @@ router.post('/checkout', optionalAuth, async (req, res) => {
         color: item.color || (prod?.color || 'Black'),
         qty: Number(item.qty) || 1,
         img: item.img || prod?.img || '',
+        customDetails: item.customDetails || null,
       });
     }
 
