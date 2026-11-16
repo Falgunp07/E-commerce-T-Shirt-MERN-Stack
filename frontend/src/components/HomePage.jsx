@@ -154,7 +154,7 @@ export default function HomePage() {
 														<div className="text-lg font-black text-brand-ink">{formatPrice(p.price)}</div>
 													</div>
 													<div className="text-right text-xs font-medium text-slate-500">
-														Size <span className="font-semibold text-brand-ink">S M L</span>
+														Sizes: <span className="font-bold text-brand-ink">{Array.isArray(p.variants) && p.variants.length > 0 ? [...new Set(p.variants.map((v) => v.size))].join(' ') : 'S M L XL'}</span>
 													</div>
 												</div>
 

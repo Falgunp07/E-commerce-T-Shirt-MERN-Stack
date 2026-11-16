@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -30,13 +30,22 @@ const COLOR_OPTIONS = [
 
 export default function Products() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
   const { cart, addItem, updateItemQty, removeItem } = useCart();
   const { wishlist, toggleItem } = useWishlist();
   const [products, setProducts] = useState([]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
   const [color, setColor] = useState('All');
   const [sortBy, setSortBy] = useState('featured');
   const [priceBand, setPriceBand] = useState('all');
+
+  useEffect(() => {
+    const q = searchParams.get('q') || searchParams.get('search');
+    if (q !== null && q !== undefined) {
+      setQuery(q);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     let mounted = true;
@@ -242,7 +251,7 @@ export default function Products() {
                     <div className="text-lg font-black text-brand-ink">₹{p.price}</div>
                   </div>
                   <div className="text-right text-xs font-medium text-slate-500">
-                    Size <span className="font-semibold text-brand-ink">S M L</span>
+                    Sizes: <span className="font-bold text-brand-ink">{Array.isArray(p.variants) && p.variants.length > 0 ? [...new Set(p.variants.map((v) => v.size))].join(' ') : 'S M L XL'}</span>
                   </div>
                 </div>
 
