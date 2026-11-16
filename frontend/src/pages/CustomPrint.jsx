@@ -22,6 +22,20 @@ export default function CustomPrint() {
 
   const basePrice = 899;
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Please upload an image smaller than 5MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setArtworkUrl(event.target?.result || '');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleAddToCart = () => {
     addItem({
       id: `custom-tee-${Date.now()}`,
@@ -34,6 +48,8 @@ export default function CustomPrint() {
       customDetails: {
         text: customText,
         position: printPosition,
+        artworkUrl: artworkUrl || '',
+        fontStyle,
       },
     });
     setAddedNotice(true);
@@ -130,13 +146,45 @@ export default function CustomPrint() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">Or Artwork / Logo Image URL (PNG/SVG)</label>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Upload Custom Logo / Artwork (PNG, JPG, SVG)
+                    </label>
+                    {artworkUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setArtworkUrl('')}
+                        className="text-xs font-semibold text-red-600 hover:underline cursor-pointer"
+                      >
+                        Remove Logo
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <label className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-black px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition">
+                      <span>📁 Choose Image File</span>
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    <span className="text-xs text-slate-400 font-medium">or paste image URL:</span>
+                  </div>
+
                   <input
                     type="url"
-                    value={artworkUrl}
-                    onChange={(e) => setArtworkUrl(e.target.value)}
-                    className="mt-1 block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-900 outline-none focus:border-brand-ink focus:bg-white font-mono"
+                    value={artworkUrl.startsWith('data:') ? '[Uploaded File Active]' : artworkUrl}
+                    onChange={(e) => {
+                      if (!e.target.value.startsWith('[Uploaded File')) {
+                        setArtworkUrl(e.target.value);
+                      }
+                    }}
+                    disabled={artworkUrl.startsWith('data:')}
+                    className="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-brand-ink focus:bg-white font-mono disabled:opacity-75 disabled:bg-emerald-50 disabled:border-emerald-300 disabled:text-emerald-800"
                     placeholder="https://example.com/my-logo.png"
                   />
                 </div>
