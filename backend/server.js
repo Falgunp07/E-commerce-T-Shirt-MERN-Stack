@@ -9,6 +9,7 @@ import couponRoutes from './routes/couponRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import contentRoutes from './routes/contentRoutes.js';
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use(['/api/coupons', '/coupons'], couponRoutes);
 app.use(['/api/products', '/products'], productRoutes);
 app.use(['/api', '/'], orderRoutes);
 app.use(['/api/admin', '/admin'], adminRoutes);
+app.use(['/api', '/'], contentRoutes);
 
 // Start standalone server locally (Vercel automatically exports and manages the app)
 if (!process.env.VERCEL) {
