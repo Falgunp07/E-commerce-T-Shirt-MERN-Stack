@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -10,13 +11,33 @@ export default function Contact() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [referenceId, setReferenceId] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const ref = `TL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    setReferenceId(ref);
-    setSubmitted(true);
+    setErrorMessage('');
+    setSubmitting(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setReferenceId(data.referenceId || `RE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
+        setSubmitted(true);
+      } else {
+        setErrorMessage(data.message || 'Unable to submit inquiry. Please try again.');
+      }
+    } catch {
+      setErrorMessage('Network error connecting to server. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -145,11 +166,18 @@ export default function Contact() {
                   ></textarea>
                 </div>
 
+                {errorMessage && (
+                  <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-600">
+                    {errorMessage}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="rounded-full bg-black px-7 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-slate-800 transition cursor-pointer"
+                  disabled={submitting}
+                  className="rounded-full bg-black px-7 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-slate-800 disabled:opacity-50 transition cursor-pointer"
                 >
-                  Submit Inquiry
+                  {submitting ? 'Submitting...' : 'Submit Inquiry'}
                 </button>
               </form>
             )}
