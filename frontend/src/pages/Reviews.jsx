@@ -1,79 +1,91 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 const INITIAL_REVIEWS = [
   {
-    id: 1,
+    _id: 'rev_1',
     name: 'Aarav Sharma',
     rating: 5,
     quote: 'Print quality was clean and the size fit exactly how I expected. Heavyweight cotton feels like true streetwear.',
-    date: '2 days ago',
+    createdAt: new Date(Date.now() - 2 * 86400000),
   },
   {
-    id: 2,
+    _id: 'rev_2',
     name: 'Ishita Patel',
     rating: 5,
     quote: 'The COD checkout made it easy to place the order quickly. Arrived in 3 days with neat branded packaging.',
-    date: '5 days ago',
+    createdAt: new Date(Date.now() - 5 * 86400000),
   },
   {
-    id: 3,
+    _id: 'rev_3',
     name: 'Kabir Verma',
     rating: 5,
     quote: 'Loved the oversized tee and the material feels premium. Washed twice inside out and colors remained vivid.',
-    date: '1 week ago',
+    createdAt: new Date(Date.now() - 7 * 86400000),
   },
   {
-    id: 4,
+    _id: 'rev_4',
     name: 'Rohan Deshmukh',
     rating: 5,
     quote: 'Ordered the custom printed tees for our startup team. DTG print resolution is razor sharp!',
-    date: '2 weeks ago',
+    createdAt: new Date(Date.now() - 14 * 86400000),
   },
 ];
 
 export default function Reviews() {
-  const [reviewsList, setReviewsList] = useState(() => {
-    try {
-      const saved = localStorage.getItem('rudraksh_reviews');
-      return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
-    } catch {
-      return INITIAL_REVIEWS;
-    }
-  });
-
+  const [reviewsList, setReviewsList] = useState(INITIAL_REVIEWS);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [name, setName] = useState('');
   const [rating, setRating] = useState(5);
   const [quote, setQuote] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmitReview = (e) => {
+  useEffect(() => {
+    let mounted = true;
+    fetch(`${API_BASE_URL}/api/reviews`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!mounted) return;
+        if (data.success && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          setReviewsList(data.reviews);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!name.trim() || !quote.trim()) return;
 
-    const newRev = {
-      id: Date.now(),
-      name: name.trim(),
-      rating,
-      quote: quote.trim(),
-      date: 'Just now',
-    };
-
-    const updated = [newRev, ...reviewsList];
-    setReviewsList(updated);
+    setSubmitting(true);
     try {
-      localStorage.setItem('rudraksh_reviews', JSON.stringify(updated));
-    } catch {}
-
-    setName('');
-    setQuote('');
-    setRating(5);
-    setSubmitSuccess(true);
-    setTimeout(() => {
-      setSubmitSuccess(false);
-      setShowReviewForm(false);
-    }, 2000);
+      const res = await fetch(`${API_BASE_URL}/api/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), rating, quote: quote.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.review) {
+        setReviewsList((prev) => [data.review, ...prev]);
+        setName('');
+        setQuote('');
+        setRating(5);
+        setSubmitSuccess(true);
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowReviewForm(false);
+        }, 2000);
+      }
+    } catch {
+      alert('Error posting review. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -166,17 +178,24 @@ export default function Reviews() {
 
           {/* Review Grid */}
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {reviewsList.map((review) => (
-              <article key={review.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm flex flex-col justify-between">
+            {reviewsList.map((review, idx) => (
+              <article key={review._id || review.id || idx} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-1 text-amber-400 text-sm mb-2">
-                    {'★'.repeat(review.rating || 5)}
+                    {'★'.repeat(Math.min(5, Math.max(1, review.rating || 5)))}
                   </div>
                   <p className="text-sm leading-6 text-slate-600">“{review.quote}”</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
-                  <span className="font-bold text-brand-ink">{review.name}</span>
-                  <span className="text-slate-400 text-[10px]">{review.date || 'Verified Buyer'}</span>
+                  <div>
+                    <span className="font-bold text-brand-ink block">{review.name}</span>
+                    {review.productTitle && (
+                      <span className="text-[10px] text-slate-400 truncate block max-w-[140px]">{review.productTitle}</span>
+                    )}
+                  </div>
+                  <span className="text-emerald-600 font-semibold text-[10px] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Verified Buyer
+                  </span>
                 </div>
               </article>
             ))}
